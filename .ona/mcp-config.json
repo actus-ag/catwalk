@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "docs-mcp-server": {
+      "type": "http",
+      "url": "https://docs.mcp.actus-tax.com/mcp",
+      "disabled": false
+    }
+  }
+}
