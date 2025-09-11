@@ -1,11 +1,11 @@
 {
   "mcpServers": {
-    "playwright": {
-      "name": "playwright",
-      "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"],
-      "disabled": false,
-      "timeout": 60
+    "docs-mcp-server": {
+      "command": "bunx",
+      "args": [
+        "mcp-remote",
+        "https://docs.mcp.actus-tax.com/mcp"
+      ]
     }
   }
 }
