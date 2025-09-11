@@ -1,9 +1,11 @@
 {
   "mcpServers": {
-    "docs-mcp-server": {
-      "type": "http",
-      "url": "https://docs.mcp.actus-tax.com/mcp",
-      "disabled": false
+    "playwright": {
+      "name": "playwright",
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"],
+      "disabled": false,
+      "timeout": 60
     }
   }
 }
