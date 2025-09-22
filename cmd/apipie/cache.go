@@ -63,7 +63,9 @@ func (c *Cache) initSchema() error {
 	return err
 }
 
-// hashDescription creates a SHA256 hash of the model description
+
+
+// hashDescription creates a SHA256 hash of the model description (legacy function)
 // This allows us to detect when descriptions change and invalidate cache
 func hashDescription(description string) string {
 	hash := sha256.Sum256([]byte(description))
@@ -71,18 +73,18 @@ func hashDescription(description string) string {
 }
 
 // Get retrieves a cached display name for a model
-// Returns empty string if not found or description has changed
-func (c *Cache) Get(modelID, description string) string {
-	descHash := hashDescription(description)
+// Returns empty string if not found or metadata has changed
+func (c *Cache) Get(model Model) string {
+	metadataHash := hashModelMetadata(model)
 	
 	var displayName string
 	query := `SELECT display_name FROM display_name_cache 
 			  WHERE model_id = ? AND description_hash = ?`
 	
-	err := c.db.QueryRow(query, modelID, descHash).Scan(&displayName)
+	err := c.db.QueryRow(query, model.ID, metadataHash).Scan(&displayName)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Printf("Cache get error for model %s: %v", modelID, err)
+			log.Printf("Cache get error for model %s: %v", model.ID, err)
 		}
 		return ""
 	}
@@ -91,16 +93,16 @@ func (c *Cache) Get(modelID, description string) string {
 }
 
 // Set stores a display name in the cache
-func (c *Cache) Set(modelID, description, displayName string) error {
-	descHash := hashDescription(description)
+func (c *Cache) Set(model Model, displayName string) error {
+	metadataHash := hashModelMetadata(model)
 	
 	query := `INSERT OR REPLACE INTO display_name_cache 
 			  (model_id, description_hash, display_name, created_at) 
 			  VALUES (?, ?, ?, ?)`
 	
-	_, err := c.db.Exec(query, modelID, descHash, displayName, time.Now())
+	_, err := c.db.Exec(query, model.ID, metadataHash, displayName, time.Now())
 	if err != nil {
-		return fmt.Errorf("failed to cache display name for model %s: %w", modelID, err)
+		return fmt.Errorf("failed to cache display name for model %s: %w", model.ID, err)
 	}
 	
 	return nil

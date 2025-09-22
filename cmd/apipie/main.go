@@ -29,6 +29,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -54,6 +55,9 @@ type Model struct {
 	Type              string   `json:"type,omitempty"`
 	Subtype           string   `json:"subtype,omitempty"`
 	Provider          string   `json:"provider,omitempty"`
+	Pool              string   `json:"pool,omitempty"`
+	InstructType      string   `json:"instruct_type,omitempty"`
+	Quantization      string   `json:"quantization,omitempty"`
 	Enabled           int      `json:"enabled,omitempty"`
 	Available         int      `json:"available,omitempty"`
 	InputModalities   []string `json:"input_modalities,omitempty"`
@@ -155,6 +159,151 @@ func notifyGitHubUser(message string) {
 		fmt.Printf("::warning title=APIpie API Key Issue::@%s %s\n", user, message)
 		log.Printf("GitHub notification: @%s %s", user, message)
 	}
+}
+
+// generateDisplayNamesForGroup uses APIpie.ai to generate professional display names
+// for a group of models with the same ID, helping users differentiate between variants.
+func generateDisplayNamesForGroup(models []Model) map[string]string {
+	// Use dedicated API key for display name generation (donated for this project)
+	apiKey := os.Getenv("APIPIE_DISPLAY_NAME_API_KEY")
+	if apiKey == "" {
+		return nil
+	}
+
+	// If only one model, use simple generation
+	if len(models) == 1 {
+		if name := generateDisplayNameWithLLM(models[0].ID, models[0].Description); name != "" {
+			return map[string]string{getModelCacheKey(models[0]): name}
+		}
+		return nil
+	}
+
+	// Build enhanced prompt for multiple variants
+	prompt := `You are a model naming expert. Generate professional display names for AI models that help users differentiate between variants.
+
+MODELS TO NAME:
+`
+	for i, model := range models {
+		prompt += fmt.Sprintf(`[%d] Model ID: "%s"
+    Provider: "%s"
+    Route: "%s"
+    Pool: "%s"
+    Subtype: "%s"
+    Description: "%s"
+
+`, i+1, model.ID, model.Provider, model.Route, model.Pool, model.Subtype, strings.Split(model.Description, "\n")[0])
+	}
+
+	prompt += `NAMING RULES:
+1. If one model has provider="pool", give it the simple canonical name (this is the meta-model)
+2. For provider-specific variants, add provider name: "GPT-4 (OpenAI)", "GPT-4 (Azure)"
+3. For feature variants, highlight differences: "GPT-4 Vision", "GPT-4 Turbo"
+4. Keep names under 50 characters
+5. Use proper capitalization and formatting
+6. Make differences clear and concise
+
+Generate names in this exact format (one per line):
+[1] -> Display Name Here
+[2] -> Display Name Here
+etc.`
+
+	reqBody := APIpieRequest{
+		Messages: []APIpieMessage{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Model:       "claude-sonnet-4",
+		MaxTokens:   300,
+		Temperature: 0.1, // Low temperature for consistent results
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		notifyGitHubUser("Failed to marshal APIpie request for group display name generation")
+		return nil
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		"POST",
+		"https://apipie.ai/v1/chat/completions",
+		bytes.NewBuffer(jsonData),
+	)
+	if err != nil {
+		notifyGitHubUser("Failed to create APIpie request for group display name generation")
+		return nil
+	}
+
+	req.Header.Set("x-api-key", apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		notifyGitHubUser("APIpie API request failed for group display name generation - network error")
+		return nil
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		body, _ := io.ReadAll(resp.Body)
+		notifyGitHubUser(fmt.Sprintf("APIpie API returned status %d for group display name generation: %s", resp.StatusCode, string(body)))
+		return nil
+	}
+
+	var apipieResp APIpieResponse
+	if err := json.NewDecoder(resp.Body).Decode(&apipieResp); err != nil {
+		notifyGitHubUser("Failed to decode APIpie response for group display name generation")
+		return nil
+	}
+
+	if len(apipieResp.Choices) == 0 {
+		notifyGitHubUser("APIpie returned empty choices for group display name generation")
+		return nil
+	}
+
+	// Parse the response to extract names
+	response := strings.TrimSpace(apipieResp.Choices[0].Message.Content)
+	return parseGroupNamesResponse(response, models)
+}
+
+// parseGroupNamesResponse parses the LLM response and maps names to models
+func parseGroupNamesResponse(response string, models []Model) map[string]string {
+	lines := strings.Split(response, "\n")
+	result := make(map[string]string)
+	
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if strings.Contains(line, "] ->") {
+			// Parse format: "[1] -> Display Name"
+			parts := strings.SplitN(line, "] ->", 2)
+			if len(parts) == 2 {
+				indexStr := strings.TrimPrefix(strings.TrimSpace(parts[0]), "[")
+				name := strings.TrimSpace(parts[1])
+				
+				// Convert to 0-based index
+				if idx := parseIndex(indexStr); idx >= 0 && idx < len(models) {
+					model := models[idx]
+					key := getModelCacheKey(model)
+					if len(name) > 0 && len(name) <= 60 && !strings.Contains(name, "\n") {
+						result[key] = name
+					}
+				}
+			}
+		}
+	}
+	
+	return result
+}
+
+// parseIndex converts string index to int, returns -1 if invalid
+func parseIndex(s string) int {
+	if idx, err := strconv.Atoi(s); err == nil && idx > 0 {
+		return idx - 1 // Convert to 0-based
+	}
+	return -1
 }
 
 // generateDisplayNameWithLLM uses APIpie.ai to generate professional display names
@@ -263,19 +412,17 @@ Generate only the display name, nothing else:`, id, strings.Split(description, "
 }
 
 // createDisplayName generates a display name for a model using cache-first approach.
-// 1. Check cache for existing display name
-// 2. If cache miss, generate with LLM and cache ONLY successful results
-// 3. If LLM fails, fall back to model ID (but don't cache fallback)
+// This is used for individual models that don't have duplicates.
 func createDisplayName(cache *Cache, model Model) string {
 	// Try cache first
-	if cachedName := cache.Get(model.ID, model.Description); cachedName != "" {
+	if cachedName := cache.Get(model); cachedName != "" {
 		return cachedName
 	}
 
 	// Cache miss - try LLM generation
 	if llmName := generateDisplayNameWithLLM(model.ID, model.Description); llmName != "" {
 		// Cache ONLY successful LLM results
-		if err := cache.Set(model.ID, model.Description, llmName); err != nil {
+		if err := cache.Set(model, llmName); err != nil {
 			log.Printf("Failed to cache display name for %s: %v", model.ID, err)
 		} else {
 			log.Printf("Cached LLM-generated name for %s: %s", model.ID, llmName)
@@ -286,6 +433,80 @@ func createDisplayName(cache *Cache, model Model) string {
 	// Fallback: Use the raw model ID as display name
 	// DO NOT cache fallback - this allows retrying LLM when API becomes available
 	return model.ID
+}
+
+// createDisplayNamesForGroup generates display names for a group of models with the same ID
+func createDisplayNamesForGroup(cache *Cache, models []Model) map[string]string {
+	result := make(map[string]string)
+	uncachedModels := []Model{}
+	
+	// Check cache for each model in the group
+	for _, model := range models {
+		if cachedName := cache.Get(model); cachedName != "" {
+			key := getModelCacheKey(model)
+			result[key] = cachedName
+		} else {
+			uncachedModels = append(uncachedModels, model)
+		}
+	}
+	
+	// If all models are cached, return cached results
+	if len(uncachedModels) == 0 {
+		return result
+	}
+	
+	// Generate names for uncached models as a group
+	if groupNames := generateDisplayNamesForGroup(uncachedModels); groupNames != nil {
+		// Cache successful results
+		for key, name := range groupNames {
+			result[key] = name
+			
+			// Find the model for this key to cache it
+			for _, model := range uncachedModels {
+				modelKey := getModelCacheKey(model)
+				if modelKey == key {
+					if err := cache.Set(model, name); err != nil {
+						log.Printf("Failed to cache group display name for %s: %v", model.ID, err)
+					} else {
+						log.Printf("Cached group LLM-generated name for %s: %s", model.ID, name)
+					}
+					break
+				}
+			}
+		}
+	}
+	
+	// For any remaining uncached models, use fallback
+	for _, model := range uncachedModels {
+		key := getModelCacheKey(model)
+		if _, exists := result[key]; !exists {
+			result[key] = model.ID // Fallback to model ID
+		}
+	}
+	
+	return result
+}
+
+// getModelCacheKey generates a unique cache key for a model including all metadata
+func getModelCacheKey(model Model) string {
+	return model.ID + "|" + hashModelMetadata(model)
+}
+
+// hashModelMetadata creates a SHA256 hash of all differentiating model metadata
+// This ensures models with same ID but different providers/routes/descriptions get separate cache entries
+func hashModelMetadata(model Model) string {
+	// Include all metadata that could differentiate models with the same ID
+	metadata := fmt.Sprintf("%s|%s|%s|%s|%s|%s|%s", 
+		model.Description,
+		model.Provider, 
+		model.Route,
+		model.Pool,
+		model.Subtype,
+		model.InstructType,
+		model.Quantization,
+	)
+	hash := sha256.Sum256([]byte(metadata))
+	return fmt.Sprintf("%x", hash)
 }
 
 func getDefaultMaxTokens(model Model) int64 {
@@ -356,47 +577,73 @@ func main() {
 		Models:              []catwalk.Model{},
 	}
 
+	// Group models by ID to handle duplicates intelligently
+	modelGroups := make(map[string][]Model)
 	for _, model := range modelsResp.Data {
-		// Skip non-text models
-		if !isTextModel(model) {
-			continue
+		if isTextModel(model) {
+			modelGroups[model.ID] = append(modelGroups[model.ID], model)
+		}
+	}
+
+	// Process each group
+	for modelID, models := range modelGroups {
+		var displayNames map[string]string
+		
+		if len(models) == 1 {
+			// Single model - use individual processing
+			model := models[0]
+			displayName := createDisplayName(cache, model)
+			key := model.ID + "|" + hashDescription(model.Description)
+			displayNames = map[string]string{key: displayName}
+		} else {
+			// Multiple models with same ID - use group processing
+			log.Printf("Processing %d variants of model %s", len(models), modelID)
+			displayNames = createDisplayNamesForGroup(cache, models)
 		}
 
-		// Parse and convert costs from per-token to per-million-tokens
-		// Try confirmed pricing first, fall back to advertised
-		var inputCostPerToken, outputCostPerToken float64
+		// Create catwalk.Model entries for each model
+		for _, model := range models {
+			key := getModelCacheKey(model)
+			displayName, exists := displayNames[key]
+			if !exists {
+				displayName = model.ID // Fallback
+			}
 
-		if model.Pricing.Confirmed.InputCost != "" {
-			inputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Confirmed.InputCost, 64)
-		} else if model.Pricing.Advertised.InputCostPerToken != "" {
-			inputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Advertised.InputCostPerToken, 64)
+			// Parse and convert costs from per-token to per-million-tokens
+			var inputCostPerToken, outputCostPerToken float64
+
+			if model.Pricing.Confirmed.InputCost != "" {
+				inputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Confirmed.InputCost, 64)
+			} else if model.Pricing.Advertised.InputCostPerToken != "" {
+				inputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Advertised.InputCostPerToken, 64)
+			}
+
+			if model.Pricing.Confirmed.OutputCost != "" {
+				outputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Confirmed.OutputCost, 64)
+			} else if model.Pricing.Advertised.OutputCostPerToken != "" {
+				outputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Advertised.OutputCostPerToken, 64)
+			}
+
+			costPer1MIn := inputCostPerToken * 1_000_000
+			costPer1MOut := outputCostPerToken * 1_000_000
+
+			m := catwalk.Model{
+				ID:                 model.ID,
+				Name:               displayName,
+				CostPer1MIn:        costPer1MIn,
+				CostPer1MOut:       costPer1MOut,
+				CostPer1MInCached:  costPer1MIn * 0.5,   // Assume 50% discount for cached
+				CostPer1MOutCached: costPer1MOut * 0.25, // Assume 75% discount for cached output
+				ContextWindow:      getContextWindow(model),
+				DefaultMaxTokens:   getDefaultMaxTokens(model),
+				CanReason:          false, // APIpie doesn't specify reasoning capabilities
+				HasReasoningEffort: false,
+				SupportsImages:     supportsImages(model),
+			}
+
+			apipieProvider.Models = append(apipieProvider.Models, m)
+			fmt.Printf("Added model %s (%s) with context window %d\n", model.ID, displayName, m.ContextWindow)
 		}
-
-		if model.Pricing.Confirmed.OutputCost != "" {
-			outputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Confirmed.OutputCost, 64)
-		} else if model.Pricing.Advertised.OutputCostPerToken != "" {
-			outputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Advertised.OutputCostPerToken, 64)
-		}
-
-		costPer1MIn := inputCostPerToken * 1_000_000
-		costPer1MOut := outputCostPerToken * 1_000_000
-
-		m := catwalk.Model{
-			ID:                 model.ID,
-			Name:               createDisplayName(cache, model),
-			CostPer1MIn:        costPer1MIn,
-			CostPer1MOut:       costPer1MOut,
-			CostPer1MInCached:  costPer1MIn * 0.5,   // Assume 50% discount for cached
-			CostPer1MOutCached: costPer1MOut * 0.25, // Assume 75% discount for cached output
-			ContextWindow:      getContextWindow(model),
-			DefaultMaxTokens:   getDefaultMaxTokens(model),
-			CanReason:          false, // APIpie doesn't specify reasoning capabilities
-			HasReasoningEffort: false,
-			SupportsImages:     supportsImages(model),
-		}
-
-		apipieProvider.Models = append(apipieProvider.Models, m)
-		fmt.Printf("Added model %s with context window %d\n", model.ID, m.ContextWindow)
 	}
 
 	// Sort models by name for consistency
