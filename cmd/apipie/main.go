@@ -184,23 +184,53 @@ func generateDisplayNamesForGroup(models []Model) map[string]string {
 MODELS TO NAME:
 `
 	for i, model := range models {
+		// Format modalities for display
+		inputMods := strings.Join(model.InputModalities, ", ")
+		if inputMods == "" {
+			inputMods = "text"
+		}
+		outputMods := strings.Join(model.OutputModalities, ", ")
+		if outputMods == "" {
+			outputMods = "text"
+		}
+		
+		// Format context window
+		contextInfo := ""
+		if model.MaxTokens > 0 {
+			if model.MaxTokens >= 1000000 {
+				contextInfo = fmt.Sprintf(" (%dM tokens)", model.MaxTokens/1000000)
+			} else if model.MaxTokens >= 1000 {
+				contextInfo = fmt.Sprintf(" (%dK tokens)", model.MaxTokens/1000)
+			} else {
+				contextInfo = fmt.Sprintf(" (%d tokens)", model.MaxTokens)
+			}
+		}
+
 		prompt += fmt.Sprintf(`[%d] Model ID: "%s"
+    Base Model: "%s"
     Provider: "%s"
     Route: "%s"
     Pool: "%s"
     Subtype: "%s"
+    Input Modalities: %s
+    Output Modalities: %s
+    Context Window: %s
     Description: "%s"
 
-`, i+1, model.ID, model.Provider, model.Route, model.Pool, model.Subtype, strings.Split(model.Description, "\n")[0])
+`, i+1, model.ID, model.Model, model.Provider, model.Route, model.Pool, model.Subtype, 
+		inputMods, outputMods, strings.TrimSpace(contextInfo), strings.Split(model.Description, "\n")[0])
 	}
 
 	prompt += `NAMING RULES:
 1. If one model has provider="pool", give it the simple canonical name (this is the meta-model)
 2. For provider-specific variants, add provider name: "GPT-4 (OpenAI)", "GPT-4 (Azure)"
-3. For feature variants, highlight differences: "GPT-4 Vision", "GPT-4 Turbo"
-4. Keep names under 50 characters
-5. Use proper capitalization and formatting
-6. Make differences clear and concise
+3. For multimodal variants, highlight capabilities: "GPT-4 Vision", "Claude 3.5 Sonnet (Vision)", "Gemini Pro (Audio)"
+4. For context window differences, include size when significant: "Claude 3.5 Sonnet (200K)", "GPT-4 Turbo (128K)"
+5. For feature variants, highlight differences: "GPT-4 Turbo", "Llama 3.1 Instruct", "Mistral 7B (Quantized)"
+6. Keep names under 50 characters
+7. Use proper capitalization and formatting
+8. Make differences clear and concise
+9. Prioritize: modalities > provider > context size > other features
 
 Generate names in this exact format (one per line):
 [1] -> Display Name Here
@@ -496,7 +526,7 @@ func getModelCacheKey(model Model) string {
 // This ensures models with same ID but different providers/routes/descriptions get separate cache entries
 func hashModelMetadata(model Model) string {
 	// Include all metadata that could differentiate models with the same ID
-	metadata := fmt.Sprintf("%s|%s|%s|%s|%s|%s|%s", 
+	metadata := fmt.Sprintf("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%d", 
 		model.Description,
 		model.Provider, 
 		model.Route,
@@ -504,6 +534,10 @@ func hashModelMetadata(model Model) string {
 		model.Subtype,
 		model.InstructType,
 		model.Quantization,
+		model.Model,                                    // Base model name
+		strings.Join(model.InputModalities, ","),       // Input modalities (text, image, audio, etc.)
+		strings.Join(model.OutputModalities, ","),      // Output modalities
+		model.MaxTokens,                               // Context window size
 	)
 	hash := sha256.Sum256([]byte(metadata))
 	return fmt.Sprintf("%x", hash)
