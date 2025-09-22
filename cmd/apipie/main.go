@@ -170,10 +170,10 @@ func generateDisplayNamesForGroup(models []Model) map[string]string {
 		return nil
 	}
 
-	// If only one model, use simple generation
+	// If only one model, use the same prompt as group processing
 	if len(models) == 1 {
-		if name := generateDisplayNameWithLLM(models[0].ID, models[0].Description); name != "" {
-			return map[string]string{getModelCacheKey(models[0]): name}
+		if names := generateDisplayNamesForGroup(models); names != nil {
+			return names
 		}
 		return nil
 	}
@@ -193,7 +193,7 @@ MODELS TO NAME:
 		if outputMods == "" {
 			outputMods = "text"
 		}
-		
+
 		// Format context window
 		contextInfo := ""
 		if model.MaxTokens > 0 {
@@ -217,8 +217,8 @@ MODELS TO NAME:
     Context Window: %s
     Description: "%s"
 
-`, i+1, model.ID, model.Model, model.Provider, model.Route, model.Pool, model.Subtype, 
-		inputMods, outputMods, strings.TrimSpace(contextInfo), strings.Split(model.Description, "\n")[0])
+`, i+1, model.ID, model.Model, model.Provider, model.Route, model.Pool, model.Subtype,
+			inputMods, outputMods, strings.TrimSpace(contextInfo), strings.Split(model.Description, "\n")[0])
 	}
 
 	prompt += `NAMING RULES:
@@ -303,7 +303,7 @@ etc.`
 func parseGroupNamesResponse(response string, models []Model) map[string]string {
 	lines := strings.Split(response, "\n")
 	result := make(map[string]string)
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if strings.Contains(line, "] ->") {
@@ -312,7 +312,7 @@ func parseGroupNamesResponse(response string, models []Model) map[string]string 
 			if len(parts) == 2 {
 				indexStr := strings.TrimPrefix(strings.TrimSpace(parts[0]), "[")
 				name := strings.TrimSpace(parts[1])
-				
+
 				// Convert to 0-based index
 				if idx := parseIndex(indexStr); idx >= 0 && idx < len(models) {
 					model := models[idx]
@@ -324,7 +324,7 @@ func parseGroupNamesResponse(response string, models []Model) map[string]string 
 			}
 		}
 	}
-	
+
 	return result
 }
 
@@ -336,132 +336,16 @@ func parseIndex(s string) int {
 	return -1
 }
 
-// generateDisplayNameWithLLM uses APIpie.ai to generate professional display names
-// for AI models based on their ID and description. This function is sponsored
-// to improve the user experience of this open source project.
-//
-// Fallback: If the API key is not working or not provided, returns empty string
-// and the caller should fall back to using the raw model ID as display name.
-func generateDisplayNameWithLLM(id, description string) string {
-	// Use dedicated API key for display name generation (donated for this project)
-	apiKey := os.Getenv("APIPIE_DISPLAY_NAME_API_KEY")
-	if apiKey == "" {
-		return ""
-	}
-
-	// Create a comprehensive prompt for high-quality results
-	prompt := fmt.Sprintf(`You are a model naming expert. Generate a clean, professional display name for an AI model.
-
-Rules:
-- Use proper capitalization (GPT-4, Claude 3.5, Llama 3.1, etc.)
-- Keep version numbers and important identifiers
-- Remove redundant words and technical jargon
-- Make it user-friendly but informative
-- Maximum 50 characters
-- Follow established naming patterns from major providers
-
-Examples:
-- ID: "gpt-4o-2024-11-20" → "GPT-4o (2024-11-20)"
-- ID: "claude-3-5-sonnet" → "Claude 3.5 Sonnet"
-- ID: "llama-3-1-70b-instruct" → "Llama 3.1 70B Instruct"
-- ID: "mistral-7b-instruct-v0-3" → "Mistral 7B Instruct v0.3"
-
-Model ID: "%s"
-Description: "%s"
-
-Generate only the display name, nothing else:`, id, strings.Split(description, "\n")[0])
-
-	reqBody := APIpieRequest{
-		Messages: []APIpieMessage{
-			{
-				Role:    "user",
-				Content: prompt,
-			},
-		},
-		Model:       "claude-sonnet-4",
-		MaxTokens:   100,
-		Temperature: 0.1, // Low temperature for consistent results
-	}
-
-	jsonData, err := json.Marshal(reqBody)
-	if err != nil {
-		notifyGitHubUser("Failed to marshal APIpie request for display name generation")
-		return ""
-	}
-
-	client := &http.Client{Timeout: 30 * time.Second}
-	req, err := http.NewRequestWithContext(
-		context.Background(),
-		"POST",
-		"https://apipie.ai/v1/chat/completions",
-		bytes.NewBuffer(jsonData),
-	)
-	if err != nil {
-		notifyGitHubUser("Failed to create APIpie request for display name generation")
-		return ""
-	}
-
-	req.Header.Set("x-api-key", apiKey)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		notifyGitHubUser("APIpie API request failed for display name generation - network error")
-		return ""
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		body, _ := io.ReadAll(resp.Body)
-		notifyGitHubUser(fmt.Sprintf("APIpie API returned status %d for display name generation: %s", resp.StatusCode, string(body)))
-		return ""
-	}
-
-	var apipieResp APIpieResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apipieResp); err != nil {
-		notifyGitHubUser("Failed to decode APIpie response for display name generation")
-		return ""
-	}
-
-	if len(apipieResp.Choices) == 0 {
-		notifyGitHubUser("APIpie returned empty choices for display name generation")
-		return ""
-	}
-
-	// Clean up the response
-	name := strings.TrimSpace(apipieResp.Choices[0].Message.Content)
-	name = strings.Trim(name, "\"'") // Remove quotes if present
-
-	// Validate the response (basic sanity check)
-	if len(name) > 0 && len(name) <= 60 && !strings.Contains(name, "\n") {
-		return name
-	}
-
-	notifyGitHubUser(fmt.Sprintf("APIpie returned invalid display name format: '%s'", name))
-	return ""
-}
-
 // createDisplayName generates a display name for a model using cache-first approach.
 // This is used for individual models that don't have duplicates.
 func createDisplayName(cache *Cache, model Model) string {
-	// Try cache first
-	if cachedName := cache.Get(model); cachedName != "" {
-		return cachedName
+	// Use the same prompt as group processing (for consistency)
+	result := createDisplayNamesForGroup(cache, []Model{model})
+	key := getModelCacheKey(model)
+	if name, exists := result[key]; exists {
+		return name
 	}
-
-	// Cache miss - try LLM generation
-	if llmName := generateDisplayNameWithLLM(model.ID, model.Description); llmName != "" {
-		// Cache ONLY successful LLM results
-		if err := cache.Set(model, llmName); err != nil {
-			log.Printf("Failed to cache display name for %s: %v", model.ID, err)
-		} else {
-			log.Printf("Cached LLM-generated name for %s: %s", model.ID, llmName)
-		}
-		return llmName
-	}
-
-	// Fallback: Use the raw model ID as display name
-	// DO NOT cache fallback - this allows retrying LLM when API becomes available
+	// Fallback to model ID if something went wrong
 	return model.ID
 }
 
@@ -469,7 +353,7 @@ func createDisplayName(cache *Cache, model Model) string {
 func createDisplayNamesForGroup(cache *Cache, models []Model) map[string]string {
 	result := make(map[string]string)
 	uncachedModels := []Model{}
-	
+
 	// Check cache for each model in the group
 	for _, model := range models {
 		if cachedName := cache.Get(model); cachedName != "" {
@@ -479,18 +363,18 @@ func createDisplayNamesForGroup(cache *Cache, models []Model) map[string]string 
 			uncachedModels = append(uncachedModels, model)
 		}
 	}
-	
+
 	// If all models are cached, return cached results
 	if len(uncachedModels) == 0 {
 		return result
 	}
-	
+
 	// Generate names for uncached models as a group
 	if groupNames := generateDisplayNamesForGroup(uncachedModels); groupNames != nil {
 		// Cache successful results
 		for key, name := range groupNames {
 			result[key] = name
-			
+
 			// Find the model for this key to cache it
 			for _, model := range uncachedModels {
 				modelKey := getModelCacheKey(model)
@@ -505,7 +389,7 @@ func createDisplayNamesForGroup(cache *Cache, models []Model) map[string]string 
 			}
 		}
 	}
-	
+
 	// For any remaining uncached models, use fallback
 	for _, model := range uncachedModels {
 		key := getModelCacheKey(model)
@@ -513,7 +397,7 @@ func createDisplayNamesForGroup(cache *Cache, models []Model) map[string]string 
 			result[key] = model.ID // Fallback to model ID
 		}
 	}
-	
+
 	return result
 }
 
@@ -526,18 +410,18 @@ func getModelCacheKey(model Model) string {
 // This ensures models with same ID but different providers/routes/descriptions get separate cache entries
 func hashModelMetadata(model Model) string {
 	// Include all metadata that could differentiate models with the same ID
-	metadata := fmt.Sprintf("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%d", 
+	metadata := fmt.Sprintf("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%d",
 		model.Description,
-		model.Provider, 
+		model.Provider,
 		model.Route,
 		model.Pool,
 		model.Subtype,
 		model.InstructType,
 		model.Quantization,
-		model.Model,                                    // Base model name
-		strings.Join(model.InputModalities, ","),       // Input modalities (text, image, audio, etc.)
-		strings.Join(model.OutputModalities, ","),      // Output modalities
-		model.MaxTokens,                               // Context window size
+		model.Model,                              // Base model name
+		strings.Join(model.InputModalities, ","), // Input modalities (text, image, audio, etc.)
+		strings.Join(model.OutputModalities, ","), // Output modalities
+		model.MaxTokens, // Context window size
 	)
 	hash := sha256.Sum256([]byte(metadata))
 	return fmt.Sprintf("%x", hash)
@@ -552,8 +436,6 @@ func getDefaultMaxTokens(model Model) int64 {
 	}
 	return 4096 // reasonable default
 }
-
-
 
 // This is used to generate the apipie.json config file.
 func main() {
@@ -601,7 +483,7 @@ func main() {
 	// Process each group
 	for modelID, models := range modelGroups {
 		var displayNames map[string]string
-		
+
 		if len(models) == 1 {
 			// Single model - use individual processing
 			model := models[0]
