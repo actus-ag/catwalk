@@ -622,23 +622,23 @@ func main() {
 				displayName = model.ID // Fallback
 			}
 
-			// Parse and convert costs from per-token to per-million-tokens
-			var inputCostPerToken, outputCostPerToken float64
+			// Parse and convert costs to per-million-tokens
+			var costPer1MIn, costPer1MOut float64
 
+			// Confirmed pricing is already per-million-tokens, advertised is per-token
 			if model.Pricing.Confirmed.InputCost != "" {
-				inputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Confirmed.InputCost, 64)
+				costPer1MIn, _ = strconv.ParseFloat(model.Pricing.Confirmed.InputCost, 64)
 			} else if model.Pricing.Advertised.InputCostPerToken != "" {
-				inputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Advertised.InputCostPerToken, 64)
+				inputCostPerToken, _ := strconv.ParseFloat(model.Pricing.Advertised.InputCostPerToken, 64)
+				costPer1MIn = inputCostPerToken * 1_000_000
 			}
 
 			if model.Pricing.Confirmed.OutputCost != "" {
-				outputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Confirmed.OutputCost, 64)
+				costPer1MOut, _ = strconv.ParseFloat(model.Pricing.Confirmed.OutputCost, 64)
 			} else if model.Pricing.Advertised.OutputCostPerToken != "" {
-				outputCostPerToken, _ = strconv.ParseFloat(model.Pricing.Advertised.OutputCostPerToken, 64)
+				outputCostPerToken, _ := strconv.ParseFloat(model.Pricing.Advertised.OutputCostPerToken, 64)
+				costPer1MOut = outputCostPerToken * 1_000_000
 			}
-
-			costPer1MIn := inputCostPerToken * 1_000_000
-			costPer1MOut := outputCostPerToken * 1_000_000
 
 			m := catwalk.Model{
 				ID:                 model.ID,
