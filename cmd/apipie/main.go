@@ -553,28 +553,7 @@ func getDefaultMaxTokens(model Model) int64 {
 	return 4096 // reasonable default
 }
 
-func getContextWindow(model Model) int64 {
-	if model.MaxTokens > 0 {
-		return model.MaxTokens
-	}
-	// Fallback defaults based on common model patterns
-	switch {
-	case strings.Contains(strings.ToLower(model.ID), "gpt-4o"):
-		return 128000
-	case strings.Contains(strings.ToLower(model.ID), "gpt-4"):
-		return 8192
-	case strings.Contains(strings.ToLower(model.ID), "gpt-3.5"):
-		return 16385
-	case strings.Contains(strings.ToLower(model.ID), "claude"):
-		return 200000
-	case strings.Contains(strings.ToLower(model.ID), "gemini"):
-		return 32768
-	case strings.Contains(strings.ToLower(model.ID), "llama"):
-		return 128000
-	default:
-		return 32768
-	}
-}
+
 
 // This is used to generate the apipie.json config file.
 func main() {
@@ -668,7 +647,7 @@ func main() {
 				CostPer1MOut:       costPer1MOut,
 				CostPer1MInCached:  costPer1MIn * 0.5,   // Assume 50% discount for cached
 				CostPer1MOutCached: costPer1MOut * 0.25, // Assume 75% discount for cached output
-				ContextWindow:      getContextWindow(model),
+				ContextWindow:      model.MaxTokens,
 				DefaultMaxTokens:   getDefaultMaxTokens(model),
 				CanReason:          false, // APIpie doesn't specify reasoning capabilities
 				HasReasoningEffort: false,
