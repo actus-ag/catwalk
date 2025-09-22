@@ -262,17 +262,29 @@ Generate only the display name, nothing else:`, id, strings.Split(description, "
 	return ""
 }
 
-// createDisplayName generates a display name for a model using LLM when possible.
-// If the APIpie API key is not working or not provided, falls back to using
-// the raw model ID as the display name to ensure the tool never breaks.
-func createDisplayName(model Model) string {
-	// Try LLM generation first (if API key is available and working)
+// createDisplayName generates a display name for a model using cache-first approach.
+// 1. Check cache for existing display name
+// 2. If cache miss, generate with LLM and cache ONLY successful results
+// 3. If LLM fails, fall back to model ID (but don't cache fallback)
+func createDisplayName(cache *Cache, model Model) string {
+	// Try cache first
+	if cachedName := cache.Get(model.ID, model.Description); cachedName != "" {
+		return cachedName
+	}
+
+	// Cache miss - try LLM generation
 	if llmName := generateDisplayNameWithLLM(model.ID, model.Description); llmName != "" {
+		// Cache ONLY successful LLM results
+		if err := cache.Set(model.ID, model.Description, llmName); err != nil {
+			log.Printf("Failed to cache display name for %s: %v", model.ID, err)
+		} else {
+			log.Printf("Cached LLM-generated name for %s: %s", model.ID, llmName)
+		}
 		return llmName
 	}
 
 	// Fallback: Use the raw model ID as display name
-	// This ensures the tool never breaks due to API issues
+	// DO NOT cache fallback - this allows retrying LLM when API becomes available
 	return model.ID
 }
 
@@ -311,6 +323,23 @@ func getContextWindow(model Model) int64 {
 
 // This is used to generate the apipie.json config file.
 func main() {
+	// Initialize cache
+	cache, err := NewCache("cmd/apipie/cache.db")
+	if err != nil {
+		log.Fatal("Error initializing cache:", err)
+	}
+	defer cache.Close()
+
+	// Clean old cache entries (older than 30 days)
+	if err := cache.CleanOldEntries(30 * 24 * time.Hour); err != nil {
+		log.Printf("Warning: Failed to clean old cache entries: %v", err)
+	}
+
+	// Get cache stats
+	if cacheCount, err := cache.GetStats(); err == nil {
+		log.Printf("Cache initialized with %d entries", cacheCount)
+	}
+
 	modelsResp, err := fetchAPIpieModels()
 	if err != nil {
 		log.Fatal("Error fetching APIpie models:", err)
@@ -354,7 +383,7 @@ func main() {
 
 		m := catwalk.Model{
 			ID:                 model.ID,
-			Name:               createDisplayName(model),
+			Name:               createDisplayName(cache, model),
 			CostPer1MIn:        costPer1MIn,
 			CostPer1MOut:       costPer1MOut,
 			CostPer1MInCached:  costPer1MIn * 0.5,   // Assume 50% discount for cached
@@ -384,6 +413,11 @@ func main() {
 	// Write to file
 	if err := os.WriteFile("internal/providers/configs/apipie.json", data, 0o600); err != nil {
 		log.Fatal("Error writing APIpie provider config:", err)
+	}
+
+	// Final cache stats
+	if finalCount, err := cache.GetStats(); err == nil {
+		log.Printf("Cache now contains %d entries", finalCount)
 	}
 
 	fmt.Printf("Successfully generated APIpie provider config with %d models\n", len(apipieProvider.Models))
