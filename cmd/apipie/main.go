@@ -44,6 +44,46 @@ import (
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 )
 
+// retryableHTTPRequest performs an HTTP request with exponential backoff retry for 502 errors
+func retryableHTTPRequest(req *http.Request, operation string) (*http.Response, error) {
+	maxRetries := 3
+	baseDelay := 1 * time.Second
+
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		client := &http.Client{Timeout: 30 * time.Second}
+		
+		resp, err := client.Do(req)
+		if err != nil {
+			if attempt == maxRetries-1 {
+				return nil, fmt.Errorf("%s failed after %d retries: %w", operation, maxRetries, err)
+			}
+			delay := baseDelay * time.Duration(1<<attempt)
+			log.Printf("%s failed, retrying in %v (attempt %d/%d): %v", operation, delay, attempt+1, maxRetries, err)
+			time.Sleep(delay)
+			continue
+		}
+
+		// Success or non-retryable error
+		if resp.StatusCode == 200 || resp.StatusCode != 502 {
+			return resp, nil
+		}
+
+		// 502 error - retry with backoff
+		if attempt == maxRetries-1 {
+			body, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			return nil, fmt.Errorf("%s returned status %d after %d retries: %s", operation, resp.StatusCode, maxRetries, string(body))
+		}
+		
+		resp.Body.Close()
+		delay := baseDelay * time.Duration(1<<attempt)
+		log.Printf("%s returned 502, retrying in %v (attempt %d/%d)", operation, delay, attempt+1, maxRetries)
+		time.Sleep(delay)
+	}
+
+	return nil, fmt.Errorf("%s max retries exceeded", operation)
+}
+
 // Model represents the complete model configuration from APIpie detailed endpoint.
 type Model struct {
 	ID                string   `json:"id"`
@@ -81,7 +121,6 @@ type ModelsResponse struct {
 }
 
 func fetchAPIpieModels() (*ModelsResponse, error) {
-	client := &http.Client{Timeout: 30 * time.Second}
 	req, _ := http.NewRequestWithContext(
 		context.Background(),
 		"GET",
@@ -95,7 +134,7 @@ func fetchAPIpieModels() (*ModelsResponse, error) {
 		req.Header.Set("x-api-key", apiKey)
 	}
 
-	resp, err := client.Do(req)
+	resp, err := retryableHTTPRequest(req, "Model fetch")
 	if err != nil {
 		return nil, err //nolint:wrapcheck
 	}
@@ -255,56 +294,25 @@ etc.`
 		return nil
 	}
 
-	// Retry with exponential backoff for 502 errors
-	var resp *http.Response
-	maxRetries := 3
-	baseDelay := 1 * time.Second
-
-	for attempt := 0; attempt < maxRetries; attempt++ {
-		client := &http.Client{Timeout: 30 * time.Second}
-		req, err := http.NewRequestWithContext(
-			context.Background(),
-			"POST",
-			"https://apipie.ai/v1/chat/completions",
-			bytes.NewBuffer(jsonData),
-		)
-		if err != nil {
-			notifyGitHubUser("Failed to create APIpie request for group display name generation")
-			return nil
-		}
-
-		req.Header.Set("x-api-key", apiKey)
-		req.Header.Set("Content-Type", "application/json")
-
-		resp, err = client.Do(req)
-		if err != nil {
-			if attempt == maxRetries-1 {
-				notifyGitHubUser(fmt.Sprintf("APIpie API request failed after %d retries for group display name generation - network error", maxRetries))
-				return nil
-			}
-			time.Sleep(baseDelay * time.Duration(1<<attempt))
-			continue
-		}
-
-		// Success or non-retryable error
-		if resp.StatusCode == 200 || resp.StatusCode != 502 {
-			break
-		}
-
-		// 502 error - retry with backoff
-		if attempt == maxRetries-1 {
-			body, _ := io.ReadAll(resp.Body)
-			resp.Body.Close()
-			notifyGitHubUser(fmt.Sprintf("APIpie API returned status %d after %d retries for group display name generation: %s", resp.StatusCode, maxRetries, string(body)))
-			return nil
-		}
-		
-		resp.Body.Close()
-		delay := baseDelay * time.Duration(1<<attempt)
-		log.Printf("APIpie returned 502, retrying in %v (attempt %d/%d)", delay, attempt+1, maxRetries)
-		time.Sleep(delay)
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		"POST",
+		"https://apipie.ai/v1/chat/completions",
+		bytes.NewBuffer(jsonData),
+	)
+	if err != nil {
+		notifyGitHubUser("Failed to create APIpie request for group display name generation")
+		return nil
 	}
 
+	req.Header.Set("x-api-key", apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := retryableHTTPRequest(req, "Group display name generation")
+	if err != nil {
+		notifyGitHubUser(fmt.Sprintf("APIpie API failed for group display name generation: %v", err))
+		return nil
+	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
