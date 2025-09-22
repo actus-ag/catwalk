@@ -2,6 +2,9 @@
 	"name": "Ubuntu Dev Container",
 	"image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
 	"features": {
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "latest"
+		},
 		"ghcr.io/rails/devcontainer/features/bun:1.0.2": {} // from https://github.com/rails/devcontainer/pkgs/container/devcontainer%2Ffeatures%2Fbun
 	},
 	"remoteUser": "vscode"
