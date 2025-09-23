@@ -57,6 +57,14 @@ func (c *Cache) initSchema() error {
 	
 	CREATE INDEX IF NOT EXISTS idx_model_id ON display_name_cache(model_id);
 	CREATE INDEX IF NOT EXISTS idx_created_at ON display_name_cache(created_at);
+	
+	CREATE TABLE IF NOT EXISTS reasoning_effort_cache (
+		description_hash TEXT NOT NULL PRIMARY KEY,
+		has_reasoning_effort BOOLEAN NOT NULL,
+		created_at DATETIME NOT NULL
+	);
+	
+	CREATE INDEX IF NOT EXISTS idx_reasoning_created_at ON reasoning_effort_cache(created_at);
 	`
 
 	_, err := c.db.Exec(query)
@@ -119,16 +127,70 @@ func (c *Cache) GetStats() (int, error) {
 // This helps keep the cache size manageable
 func (c *Cache) CleanOldEntries(maxAge time.Duration) error {
 	cutoff := time.Now().Add(-maxAge)
-	query := `DELETE FROM display_name_cache WHERE created_at < ?`
 	
+	// Clean display name cache
+	query := `DELETE FROM display_name_cache WHERE created_at < ?`
 	result, err := c.db.Exec(query, cutoff)
 	if err != nil {
-		return fmt.Errorf("failed to clean old cache entries: %w", err)
+		return fmt.Errorf("failed to clean old display name entries: %w", err)
 	}
 	
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected > 0 {
-		log.Printf("Cleaned %d old cache entries", rowsAffected)
+		log.Printf("Cleaned %d old display name cache entries", rowsAffected)
+	}
+	
+	// Clean reasoning effort cache
+	query = `DELETE FROM reasoning_effort_cache WHERE created_at < ?`
+	result, err = c.db.Exec(query, cutoff)
+	if err != nil {
+		return fmt.Errorf("failed to clean old reasoning effort entries: %w", err)
+	}
+	
+	rowsAffected, _ = result.RowsAffected()
+	if rowsAffected > 0 {
+		log.Printf("Cleaned %d old reasoning effort cache entries", rowsAffected)
+	}
+	
+	return nil
+}
+
+// GetReasoningEffort retrieves cached reasoning effort analysis for a description
+func (c *Cache) GetReasoningEffort(description string) (bool, bool) {
+	if description == "" {
+		return false, false
+	}
+	
+	hash := hashDescription(description)
+	
+	var hasEffort bool
+	err := c.db.QueryRow(
+		"SELECT has_reasoning_effort FROM reasoning_effort_cache WHERE description_hash = ?",
+		hash,
+	).Scan(&hasEffort)
+	
+	if err != nil {
+		return false, false // Cache miss
+	}
+	
+	return hasEffort, true // Cache hit
+}
+
+// SetReasoningEffort stores reasoning effort analysis result in cache
+func (c *Cache) SetReasoningEffort(description string, hasEffort bool) error {
+	if description == "" {
+		return nil
+	}
+	
+	hash := hashDescription(description)
+	
+	_, err := c.db.Exec(
+		"INSERT OR REPLACE INTO reasoning_effort_cache (description_hash, has_reasoning_effort, created_at) VALUES (?, ?, ?)",
+		hash, hasEffort, time.Now(),
+	)
+	
+	if err != nil {
+		return fmt.Errorf("failed to cache reasoning effort: %w", err)
 	}
 	
 	return nil

@@ -105,6 +105,7 @@ type Model struct {
 		Advertised struct {
 			InputCostPerToken  string `json:"input_cost_per_token"`
 			OutputCostPerToken string `json:"output_cost_per_token"`
+			InternalReasoning  string `json:"internal_reasoning"`
 		} `json:"advertised"`
 	} `json:"pricing"`
 }
@@ -161,6 +162,149 @@ func supportsImages(model Model) bool {
 		strings.Contains(strings.ToLower(model.Description), "image")
 }
 
+func canReason(model Model) bool {
+	// Check if model has reasoning capabilities based on subtype field
+	if model.Subtype != "" {
+		return strings.Contains(model.Subtype, "reasoning")
+	}
+
+	return false
+}
+
+func hasReasoningEfforts(cache *Cache, model Model) bool {
+	// Only analyze models that can reason (have "reasoning" in subtype)
+	if !canReason(model) {
+		return false
+	}
+
+	// For reasoning models, determine if they support controllable reasoning depth
+	if model.Description != "" {
+		// Primary approach: LLM analysis of description field with caching
+		if hasEffort, found := cache.GetReasoningEffort(model.Description); found {
+			return hasEffort
+		}
+
+		// Cache miss - analyze with LLM
+		result := analyzeReasoningEffortsWithLLM(model.Description)
+
+		// Cache the result (both positive and negative)
+		if err := cache.SetReasoningEffort(model.Description, result); err != nil {
+			log.Printf("Failed to cache reasoning effort for model %s: %v", model.ID, err)
+		}
+
+		// If LLM analysis succeeded, return result
+		if result {
+			return true
+		}
+	}
+
+	// Fallback: static phrase matching for controllable reasoning indicators
+	if model.Description != "" {
+		desc := strings.ToLower(model.Description)
+
+		// Common phrases that indicate CONTROLLABLE reasoning depth
+		controllableReasoningIndicators := []string{
+			"thinking tokens", "reasoning budget", "controllable reasoning",
+			"thinking depth", "reasoning depth", "controllable depth",
+			"thinking budget", "reasoning effort", "configurable reasoning",
+			"adjustable reasoning",
+		}
+
+		for _, indicator := range controllableReasoningIndicators {
+			if strings.Contains(desc, indicator) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// analyzeReasoningEffortsWithLLM uses APIpie.ai to determine if a model
+// supports controllable reasoning efforts based on its description
+func analyzeReasoningEffortsWithLLM(description string) bool {
+	// Use dedicated API key (same as for display name generation, donated for this project)
+	apiKey := os.Getenv("APIPIE_DISPLAY_NAME_API_KEY")
+	if apiKey == "" {
+		return false // Fallback to false if no API key
+	}
+
+	// Create a focused prompt for controllable reasoning effort detection
+	prompt := fmt.Sprintf(`You are an AI model capability analyzer. Determine if this model supports controllable reasoning effort/depth.
+
+Look for indicators that users can control HOW MUCH reasoning the model does, such as:
+- Thinking token budgets/limits
+- Controllable reasoning depth
+- Adjustable thinking effort
+- Reasoning parameter control
+- Step-by-step thinking control
+- Configurable reasoning modes
+
+Description: "%s"
+
+Answer only "YES" if the model clearly supports controllable reasoning effort, or "NO" if it doesn't or if unclear.`, strings.Split(description, "\n")[0])
+
+	reqBody := APIpieRequest{
+		Messages: []APIpieMessage{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Model:       "claude-sonnet-4",
+		MaxTokens:   10,
+		Temperature: 0.1, // Low temperature for consistent results
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		log.Printf("Failed to marshal reasoning effort analysis request: %v", err)
+		return false
+	}
+
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		"POST",
+		"https://apipie.ai/v1/chat/completions",
+		bytes.NewBuffer(jsonData),
+	)
+	if err != nil {
+		log.Printf("Failed to create reasoning effort analysis request: %v", err)
+		return false
+	}
+
+	req.Header.Set("x-api-key", apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := retryableHTTPRequest(req, "Reasoning effort analysis")
+	if err != nil {
+		log.Printf("Reasoning effort analysis failed: %v", err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		body, _ := io.ReadAll(resp.Body)
+		log.Printf("Reasoning effort analysis returned status %d: %s", resp.StatusCode, string(body))
+		return false
+	}
+
+	var apipieResp APIpieResponse
+	if err := json.NewDecoder(resp.Body).Decode(&apipieResp); err != nil {
+		log.Printf("Failed to decode reasoning effort analysis response: %v", err)
+		return false
+	}
+
+	if len(apipieResp.Choices) == 0 {
+		log.Printf("Reasoning effort analysis returned empty choices")
+		return false
+	}
+
+	// Parse the response
+	response := strings.TrimSpace(strings.ToUpper(apipieResp.Choices[0].Message.Content))
+	return strings.Contains(response, "YES")
+}
+
 // APIpieRequest represents a request to the APIpie chat completions API
 type APIpieRequest struct {
 	Messages    []APIpieMessage `json:"messages"`
@@ -183,8 +327,6 @@ type APIpieResponse struct {
 		} `json:"message"`
 	} `json:"choices"`
 }
-
-
 
 // generateDisplayNamesForGroup uses APIpie.ai to generate professional display names
 // for a group of models with the same ID, helping users differentiate between variants.
@@ -547,8 +689,8 @@ func main() {
 				CostPer1MOutCached: costPer1MOut * 0.25, // Assume 75% discount for cached output
 				ContextWindow:      model.MaxTokens,
 				DefaultMaxTokens:   getDefaultMaxTokens(model),
-				CanReason:          false, // APIpie doesn't specify reasoning capabilities
-				HasReasoningEffort: false,
+				CanReason:          canReason(model),
+				HasReasoningEffort: hasReasoningEfforts(cache, model),
 				SupportsImages:     supportsImages(model),
 			}
 
