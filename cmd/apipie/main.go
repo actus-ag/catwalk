@@ -15,14 +15,9 @@
 // to using the raw model ID as the display name. This ensures the tool never
 // breaks due to API issues.
 //
-// GitHub Notification:
-// If the APIpie API key fails, the tool will attempt to notify the configured
-// GitHub user (set via APIPIE_API_KEY_NOTIFY_USER environment variable) about the issue.
-//
 // Example usage:
 //
 //	export APIPIE_DISPLAY_NAME_API_KEY="your-apipie-api-key"
-//	export APIPIE_API_KEY_NOTIFY_USER="username-to-notify"
 //	go run cmd/apipie/main.go
 package main
 
@@ -189,16 +184,7 @@ type APIpieResponse struct {
 	} `json:"choices"`
 }
 
-// notifyGitHubUser attempts to log a message that can be picked up by GitHub Actions
-// to notify a user about APIpie API key issues. This is a simple logging approach that
-// GitHub Actions can parse and use to create issues or send notifications.
-func notifyGitHubUser(message string) {
-	if user := os.Getenv("APIPIE_API_KEY_NOTIFY_USER"); user != "" {
-		// Log in a format that GitHub Actions can easily parse
-		fmt.Printf("::warning title=APIpie API Key Issue::@%s %s\n", user, message)
-		log.Printf("GitHub notification: @%s %s", user, message)
-	}
-}
+
 
 // generateDisplayNamesForGroup uses APIpie.ai to generate professional display names
 // for a group of models with the same ID, helping users differentiate between variants.
@@ -282,7 +268,7 @@ etc.`
 
 	jsonData, err := json.Marshal(reqBody)
 	if err != nil {
-		notifyGitHubUser("Failed to marshal APIpie request for group display name generation")
+		log.Printf("Failed to marshal APIpie request for group display name generation: %v", err)
 		return nil
 	}
 
@@ -293,7 +279,7 @@ etc.`
 		bytes.NewBuffer(jsonData),
 	)
 	if err != nil {
-		notifyGitHubUser("Failed to create APIpie request for group display name generation")
+		log.Printf("Failed to create APIpie request for group display name generation: %v", err)
 		return nil
 	}
 
@@ -302,25 +288,25 @@ etc.`
 
 	resp, err := retryableHTTPRequest(req, "Group display name generation")
 	if err != nil {
-		notifyGitHubUser(fmt.Sprintf("APIpie API failed for group display name generation: %v", err))
+		log.Printf("APIpie API failed for group display name generation: %v", err)
 		return nil
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		body, _ := io.ReadAll(resp.Body)
-		notifyGitHubUser(fmt.Sprintf("APIpie API returned status %d for group display name generation: %s", resp.StatusCode, string(body)))
+		log.Printf("APIpie API returned status %d for group display name generation: %s", resp.StatusCode, string(body))
 		return nil
 	}
 
 	var apipieResp APIpieResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apipieResp); err != nil {
-		notifyGitHubUser("Failed to decode APIpie response for group display name generation")
+		log.Printf("Failed to decode APIpie response for group display name generation: %v", err)
 		return nil
 	}
 
 	if len(apipieResp.Choices) == 0 {
-		notifyGitHubUser("APIpie returned empty choices for group display name generation")
+		log.Printf("APIpie returned empty choices for group display name generation")
 		return nil
 	}
 

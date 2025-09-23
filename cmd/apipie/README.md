@@ -8,14 +8,11 @@ This tool includes an optional feature to generate professional display names fo
 
 ### Configuration
 
-Set the following environment variables:
+Set the following environment variable:
 
 ```bash
 # Required for LLM-enhanced display names (donated API key)
 export APIPIE_DISPLAY_NAME_API_KEY="your-apipie-api-key"
-
-# Optional: GitHub user to notify if APIpie API key issues occur
-export APIPIE_API_KEY_NOTIFY_USER="username-to-notify"
 ```
 
 ### Behavior
@@ -27,19 +24,6 @@ export APIPIE_API_KEY_NOTIFY_USER="username-to-notify"
 - **Without API key or on failure**: Falls back to using the raw model ID as display name
   - Example: `gpt-4o-2024-11-20` → `"gpt-4o-2024-11-20"`
   - This ensures the tool **never breaks** due to API issues
-
-### GitHub Actions Integration
-
-The tool outputs GitHub Actions-compatible warnings when APIpie API key issues occur:
-
-```
-::warning title=APIpie API Key Issue::@username API key not found or inactive
-```
-
-This allows GitHub Actions to:
-- Parse the warnings automatically
-- Notify the specified user about APIpie API key issues
-- Create issues or send notifications as needed
 
 ### Usage
 
