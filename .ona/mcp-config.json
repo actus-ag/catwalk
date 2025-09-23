@@ -3,6 +3,26 @@
     "docs-mcp-server": {
       "command": "bunx",
       "args": ["mcp-remote", "https://docs.mcp.actus-tax.com/mcp"]
+    },
+    "github": {
+      "name": "github",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "disabled": false,
+      "timeout": 30,
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${exec:printf 'protocol=https\nhost=github.com\n' | git credential fill 2>/dev/null | awk -F= '/password/ {print $2}' 2>/dev/null}"
+      },
+      "workingDir": "/workspace"
     }
-  }
+  },
+  "globalTimeout": 30,
+  "logLevel": "info"
 }
