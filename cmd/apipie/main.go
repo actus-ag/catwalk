@@ -51,7 +51,7 @@ func retryableHTTPRequest(req *http.Request, operation string) (*http.Response, 
 
 	for attempt := 0; attempt < maxRetries; attempt++ {
 		client := &http.Client{Timeout: 30 * time.Second}
-		
+
 		resp, err := client.Do(req)
 		if err != nil {
 			if attempt == maxRetries-1 {
@@ -74,7 +74,7 @@ func retryableHTTPRequest(req *http.Request, operation string) (*http.Response, 
 			resp.Body.Close()
 			return nil, fmt.Errorf("%s returned status %d after %d retries: %s", operation, resp.StatusCode, maxRetries, string(body))
 		}
-		
+
 		resp.Body.Close()
 		delay := baseDelay * time.Duration(1<<attempt)
 		log.Printf("%s returned 502, retrying in %v (attempt %d/%d)", operation, delay, attempt+1, maxRetries)
@@ -206,14 +206,6 @@ func generateDisplayNamesForGroup(models []Model) map[string]string {
 	// Use dedicated API key for display name generation (donated for this project)
 	apiKey := os.Getenv("APIPIE_DISPLAY_NAME_API_KEY")
 	if apiKey == "" {
-		return nil
-	}
-
-	// If only one model, use the same prompt as group processing
-	if len(models) == 1 {
-		if names := generateDisplayNamesForGroup(models); names != nil {
-			return names
-		}
 		return nil
 	}
 
