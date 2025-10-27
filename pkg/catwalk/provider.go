@@ -18,20 +18,21 @@ type InferenceProvider string
 
 // All the inference providers supported by the system.
 const (
-	InferenceProviderOpenAI     InferenceProvider = "openai"
-	InferenceProviderAnthropic  InferenceProvider = "anthropic"
-	InferenceProviderGemini     InferenceProvider = "gemini"
-	InferenceProviderAzure      InferenceProvider = "azure"
-	InferenceProviderBedrock    InferenceProvider = "bedrock"
-	InferenceProviderVertexAI   InferenceProvider = "vertexai"
-	InferenceProviderXAI        InferenceProvider = "xai"
-	InferenceProviderZAI        InferenceProvider = "zai"
-	InferenceProviderGROQ       InferenceProvider = "groq"
-	InferenceProviderOpenRouter InferenceProvider = "openrouter"
-	InferenceProviderLambda     InferenceProvider = "lambda"
-	InferenceProviderCerebras   InferenceProvider = "cerebras"
-	InferenceProviderVenice     InferenceProvider = "venice"
-	InferenceProviderChutes     InferenceProvider = "chutes"
+	InferenceProviderOpenAI      InferenceProvider = "openai"
+	InferenceProviderAnthropic   InferenceProvider = "anthropic"
+	InferenceProviderGemini      InferenceProvider = "gemini"
+	InferenceProviderAzure       InferenceProvider = "azure"
+	InferenceProviderBedrock     InferenceProvider = "bedrock"
+	InferenceProviderVertexAI    InferenceProvider = "vertexai"
+	InferenceProviderXAI         InferenceProvider = "xai"
+	InferenceProviderZAI         InferenceProvider = "zai"
+	InferenceProviderGROQ        InferenceProvider = "groq"
+	InferenceProviderOpenRouter  InferenceProvider = "openrouter"
+	InferenceProviderCerebras    InferenceProvider = "cerebras"
+	InferenceProviderVenice      InferenceProvider = "venice"
+	InferenceProviderChutes      InferenceProvider = "chutes"
+	InferenceProviderHuggingFace InferenceProvider = "huggingface"
+	InferenceAIHubMix            InferenceProvider = "aihubmix"
 )
 
 // Provider represents an AI provider configuration.
@@ -76,9 +77,10 @@ func KnownProviders() []InferenceProvider {
 		InferenceProviderZAI,
 		InferenceProviderGROQ,
 		InferenceProviderOpenRouter,
-		InferenceProviderLambda,
 		InferenceProviderCerebras,
 		InferenceProviderVenice,
 		InferenceProviderChutes,
+		InferenceProviderHuggingFace,
+		InferenceAIHubMix,
 	}
 }

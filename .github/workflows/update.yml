@@ -30,7 +30,9 @@ jobs:
         env:
           APIPIE_DISPLAY_NAME_API_KEY: ${{ secrets.APIPIE_DISPLAY_NAME_API_KEY }}
         run: go run ./cmd/apipie/main.go ./cmd/apipie/cache.go
-      - uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # v5
+      # we need to add this back when we know that the providers/models all work
+      # - run: go run ./cmd/huggingface/main.go
+      - uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 # v5
         with:
           commit_message: "chore: auto-update OpenRouter and APIpie provider configs"
           branch: main
