@@ -646,7 +646,7 @@ func main() {
 			// Single model - use individual processing
 			model := models[0]
 			displayName := createDisplayName(cache, model)
-			key := model.ID + "|" + hashDescription(model.Description)
+			key := getModelCacheKey(model)
 			displayNames = map[string]string{key: displayName}
 		} else {
 			// Multiple models with same ID - use group processing
