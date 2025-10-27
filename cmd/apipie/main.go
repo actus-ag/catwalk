@@ -251,7 +251,7 @@ Answer only "YES" if the model clearly supports controllable reasoning effort, o
 				Content: prompt,
 			},
 		},
-		Model:       "claude-sonnet-4",
+		Model:       "claude-sonnet-4-5",
 		MaxTokens:   10,
 		Temperature: 0.1, // Low temperature for consistent results
 	}
@@ -403,7 +403,7 @@ etc.`
 				Content: prompt,
 			},
 		},
-		Model:       "claude-sonnet-4",
+		Model:       "claude-sonnet-4-5",
 		MaxTokens:   300,
 		Temperature: 0.1, // Low temperature for consistent results
 	}
@@ -625,8 +625,8 @@ func main() {
 		APIKey:              "$APIPIE_API_KEY",
 		APIEndpoint:         "https://apipie.ai/v1",
 		Type:                catwalk.TypeOpenAI,
-		DefaultLargeModelID: "claude-sonnet-4",
-		DefaultSmallModelID: "claude-3-5-haiku",
+		DefaultLargeModelID: "claude-sonnet-4-5",
+		DefaultSmallModelID: "claude-haiku-4-5",
 		Models:              []catwalk.Model{},
 	}
 
@@ -685,8 +685,8 @@ func main() {
 				Name:               displayName,
 				CostPer1MIn:        costPer1MIn,
 				CostPer1MOut:       costPer1MOut,
-				CostPer1MInCached:  costPer1MIn * 0.5,   // Assume 50% discount for cached
-				CostPer1MOutCached: costPer1MOut * 0.25, // Assume 75% discount for cached output
+				CostPer1MInCached:  0,
+				CostPer1MOutCached: 0,
 				ContextWindow:      model.MaxTokens,
 				DefaultMaxTokens:   getDefaultMaxTokens(model),
 				CanReason:          canReason(model),
