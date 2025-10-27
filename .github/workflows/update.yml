@@ -34,7 +34,7 @@ jobs:
       # - run: go run ./cmd/huggingface/main.go
       - uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 # v5
         with:
-          commit_message: "chore: auto-update OpenRouter and APIpie provider configs"
+          commit_message: "chore: auto-update generated files"
           branch: main
           commit_user_name: actions-user
           commit_user_email: actions@github.com
