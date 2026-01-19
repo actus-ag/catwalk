@@ -295,26 +295,13 @@
     },
     {
       "id": "claude-3-sonnet-20240229-v1",
-      "name": "Claude 3 Sonnet (Bedrock Vision)",
+      "name": "Claude 3 Sonnet (Bedrock)",
       "cost_per_1m_in": 3.01090116,
       "cost_per_1m_out": 14.99955153,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
       "default_max_tokens": 4096,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
-      "id": "claude-3-5-haiku-20241022",
-      "name": "Claude 3.5 Haiku",
-      "cost_per_1m_in": 0.80290698,
-      "cost_per_1m_out": 3.9998364,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 200000,
-      "default_max_tokens": 8192,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
@@ -333,23 +320,23 @@
       "supports_attachments": false
     },
     {
-      "id": "claude-3-5-haiku-20241022-v1",
-      "name": "Claude 3.5 Haiku (Bedrock)",
+      "id": "claude-3-5-haiku-20241022",
+      "name": "Claude 3.5 Haiku (Anthropic)",
       "cost_per_1m_in": 0.80290698,
-      "cost_per_1m_out": 3.9998011,
+      "cost_per_1m_out": 3.9998364,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
       "default_max_tokens": 8192,
       "can_reason": false,
       "has_reasoning_efforts": false,
-      "supports_attachments": false
+      "supports_attachments": true
     },
     {
-      "id": "claude-3-5-haiku",
-      "name": "Claude 3.5 Haiku (OpenRouter)",
-      "cost_per_1m_in": 1.00363372,
-      "cost_per_1m_out": 4.9997813,
+      "id": "claude-3-5-haiku-20241022-v1",
+      "name": "Claude 3.5 Haiku (Bedrock)",
+      "cost_per_1m_in": 0.80290698,
+      "cost_per_1m_out": 3.9998011,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -370,6 +357,19 @@
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
+    },
+    {
+      "id": "claude-3-5-haiku",
+      "name": "Claude 3.5 Haiku (OpenRouter)",
+      "cost_per_1m_in": 1.00363372,
+      "cost_per_1m_out": 4.9997813,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 200000,
+      "default_max_tokens": 8192,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
     },
     {
       "id": "claude-3-5-haiku",
@@ -399,7 +399,7 @@
     },
     {
       "id": "claude-sonnet-4-5-20250929",
-      "name": "Claude 3.5 Sonnet (200K)",
+      "name": "Claude 3.5 Sonnet (Anthropic)",
       "cost_per_1m_in": 3.01090116,
       "cost_per_1m_out": 14.99971657,
       "cost_per_1m_in_cached": 0,
@@ -633,7 +633,7 @@
     },
     {
       "id": "claude-instant-v1",
-      "name": "Claude Instant (Bedrock)",
+      "name": "Claude Instant v1 (Bedrock)",
       "cost_per_1m_in": 0,
       "cost_per_1m_out": 0,
       "cost_per_1m_in_cached": 0,
@@ -697,19 +697,6 @@
       "supports_attachments": true
     },
     {
-      "id": "claude-opus-4-1-20250805",
-      "name": "Claude Opus 4.1",
-      "cost_per_1m_in": 15.05450581,
-      "cost_per_1m_out": 74.99858285,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 200000,
-      "default_max_tokens": 32000,
-      "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
       "id": "claude-opus-4-1",
       "name": "Claude Opus 4.1",
       "cost_per_1m_in": 0,
@@ -721,6 +708,19 @@
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
+    },
+    {
+      "id": "claude-opus-4-1-20250805",
+      "name": "Claude Opus 4.1",
+      "cost_per_1m_in": 15.05450581,
+      "cost_per_1m_out": 74.99858285,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 200000,
+      "default_max_tokens": 32000,
+      "can_reason": true,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
     },
     {
       "id": "claude-opus-4-1-20250805-v1",
@@ -879,32 +879,6 @@
       "supports_attachments": false
     },
     {
-      "id": "claude-sonnet-4-5-20250929-v1",
-      "name": "Claude Sonnet 4.5 (Bedrock Global)",
-      "cost_per_1m_in": 3.31199128,
-      "cost_per_1m_out": 16.4996532,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 200000,
-      "default_max_tokens": 64000,
-      "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
-      "id": "claude-sonnet-4-5-20250929-v1",
-      "name": "Claude Sonnet 4.5 (Bedrock US)",
-      "cost_per_1m_in": 3.31199128,
-      "cost_per_1m_out": 16.4996532,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 200000,
-      "default_max_tokens": 64000,
-      "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
       "id": "claude-sonnet-4-5",
       "name": "Claude Sonnet 4.5 (EdenAI)",
       "cost_per_1m_in": 3.01090116,
@@ -914,6 +888,19 @@
       "context_window": 200000,
       "default_max_tokens": 64000,
       "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "claude-sonnet-4-5-20250929-v1",
+      "name": "Claude Sonnet 4.5 (Global)",
+      "cost_per_1m_in": 3.31199128,
+      "cost_per_1m_out": 16.4996532,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 200000,
+      "default_max_tokens": 64000,
+      "can_reason": true,
       "has_reasoning_efforts": false,
       "supports_attachments": true
     },
@@ -931,8 +918,21 @@
       "supports_attachments": true
     },
     {
+      "id": "claude-sonnet-4-5-20250929-v1",
+      "name": "Claude Sonnet 4.5 (US Regions)",
+      "cost_per_1m_in": 3.31199128,
+      "cost_per_1m_out": 16.4996532,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 200000,
+      "default_max_tokens": 64000,
+      "can_reason": true,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
       "id": "claude-v2",
-      "name": "Claude v2 (Bedrock v2:1)",
+      "name": "Claude v2",
       "cost_per_1m_in": 0,
       "cost_per_1m_out": 0,
       "cost_per_1m_in_cached": 0,
@@ -945,7 +945,7 @@
     },
     {
       "id": "claude-v2",
-      "name": "Claude v2 (Bedrock)",
+      "name": "Claude v2 (v2:1)",
       "cost_per_1m_in": 0,
       "cost_per_1m_out": 0,
       "cost_per_1m_in_cached": 0,
@@ -1049,7 +1049,7 @@
     },
     {
       "id": "cogito-v2-preview-llama-109b-moe",
-      "name": "Cogito v2 Preview 109B MoE (OpenRouter)",
+      "name": "Cogito v2 Preview (109B MoE)",
       "cost_per_1m_in": 0.18047929,
       "cost_per_1m_out": 0.58998069,
       "cost_per_1m_in_cached": 0,
@@ -1126,6 +1126,19 @@
       "supports_attachments": false
     },
     {
+      "id": "command-r-08-2024",
+      "name": "Command R (August 2024)",
+      "cost_per_1m_in": 0.15048348,
+      "cost_per_1m_out": 0.59999011,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 128000,
+      "default_max_tokens": 4000,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
       "id": "command-r-v1",
       "name": "Command R (Bedrock)",
       "cost_per_1m_in": 0.5012087,
@@ -1134,19 +1147,6 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
       "default_max_tokens": 4096,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
-      "id": "command-r-08-2024",
-      "name": "Command R (OpenRouter)",
-      "cost_per_1m_in": 0.15048348,
-      "cost_per_1m_out": 0.59999011,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 128000,
-      "default_max_tokens": 4000,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
@@ -1386,6 +1386,19 @@
       "supports_attachments": true
     },
     {
+      "id": "deepseek-prover-v2-671b",
+      "name": "DeepSeek Prover V2 671B (DeepInfra)",
+      "cost_per_1m_in": 0.20072607,
+      "cost_per_1m_out": 0.87998255,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 163840,
+      "default_max_tokens": 16384,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
       "id": "deepseek-r1-distill-llama-70b",
       "name": "DeepSeek R1 Distill Llama 70B",
       "cost_per_1m_in": 0.10032814,
@@ -1556,7 +1569,7 @@
     },
     {
       "id": "deepseek-v3-2-exp",
-      "name": "DeepSeek V3.2 Exp (Reasoning)",
+      "name": "DeepSeek V3.2 Exp (OpenRouter)",
       "cost_per_1m_in": 0.21026359,
       "cost_per_1m_out": 0.31999446,
       "cost_per_1m_in_cached": 0,
@@ -1564,19 +1577,6 @@
       "context_window": 163840,
       "default_max_tokens": 65536,
       "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
-      "id": "deepseek-prover-v2-671b",
-      "name": "DeepSeek-Prover-V2 671B (DeepInfra)",
-      "cost_per_1m_in": 0.20072607,
-      "cost_per_1m_out": 0.87998255,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 163840,
-      "default_max_tokens": 16384,
-      "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
     },
@@ -1855,7 +1855,7 @@
     },
     {
       "id": "deepseek-v3",
-      "name": "DeepSeek-V3 (DeepInfra)",
+      "name": "DeepSeek-V3 (DeepInfra, 163K)",
       "cost_per_1m_in": 0.32073432,
       "cost_per_1m_out": 0.88998062,
       "cost_per_1m_in_cached": 0,
@@ -1868,7 +1868,7 @@
     },
     {
       "id": "deepseek-v3",
-      "name": "DeepSeek-V3 (EdenAI)",
+      "name": "DeepSeek-V3 (EdenAI, 65K)",
       "cost_per_1m_in": 0.91695222,
       "cost_per_1m_out": 1.09025395,
       "cost_per_1m_in_cached": 0,
@@ -1881,7 +1881,7 @@
     },
     {
       "id": "deepseek-v3",
-      "name": "DeepSeek-V3 (OpenRouter)",
+      "name": "DeepSeek-V3 (OpenRouter, 163K)",
       "cost_per_1m_in": 0.30098928,
       "cost_per_1m_out": 1.19997542,
       "cost_per_1m_in_cached": 0,
@@ -1894,7 +1894,7 @@
     },
     {
       "id": "deepseek-v3",
-      "name": "DeepSeek-V3 (Together)",
+      "name": "DeepSeek-V3 (Together, 131K)",
       "cost_per_1m_in": 1.2510305,
       "cost_per_1m_out": 1.24997347,
       "cost_per_1m_in_cached": 0,
@@ -2517,6 +2517,32 @@
       "supports_attachments": false
     },
     {
+      "id": "gpt-3-5-turbo-16k",
+      "name": "GPT-3.5 Turbo (16K)",
+      "cost_per_1m_in": 3.00327065,
+      "cost_per_1m_out": 3.99968621,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 16385,
+      "default_max_tokens": 4096,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "gpt-3-5-turbo-1106",
+      "name": "GPT-3.5 Turbo (OpenAI)",
+      "cost_per_1m_in": 1.00163532,
+      "cost_per_1m_out": 1.99984016,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 16385,
+      "default_max_tokens": 4096,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
       "id": "gpt-3-5-turbo-0125",
       "name": "GPT-3.5 Turbo (OpenAI)",
       "cost_per_1m_in": 0.50122649,
@@ -2534,19 +2560,6 @@
       "name": "GPT-3.5 Turbo (OpenAI)",
       "cost_per_1m_in": 0.50122649,
       "cost_per_1m_out": 1.49986823,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 16385,
-      "default_max_tokens": 4096,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
-      "id": "gpt-3-5-turbo-1106",
-      "name": "GPT-3.5 Turbo (OpenAI)",
-      "cost_per_1m_in": 1.00163532,
-      "cost_per_1m_out": 1.99984016,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 16385,
@@ -2582,19 +2595,6 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-3-5-turbo-16k",
-      "name": "GPT-3.5 Turbo 16K (OpenRouter)",
-      "cost_per_1m_in": 3.00327065,
-      "cost_per_1m_out": 3.99968621,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 16385,
-      "default_max_tokens": 4096,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
       "id": "gpt-3-5-turbo-instruct",
       "name": "GPT-3.5 Turbo Instruct",
       "cost_per_1m_in": 0,
@@ -2608,8 +2608,8 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-3-5-turbo-instruct-0914",
-      "name": "GPT-3.5 Turbo Instruct (0914)",
+      "id": "gpt-3-5-turbo-instruct",
+      "name": "GPT-3.5 Turbo Instruct (OpenAI)",
       "cost_per_1m_in": 0,
       "cost_per_1m_out": 0,
       "cost_per_1m_in_cached": 0,
@@ -2621,7 +2621,7 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-3-5-turbo-instruct",
+      "id": "gpt-3-5-turbo-instruct-0914",
       "name": "GPT-3.5 Turbo Instruct (OpenAI)",
       "cost_per_1m_in": 0,
       "cost_per_1m_out": 0,
@@ -2660,10 +2660,10 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-4-0613",
+      "id": "gpt-4",
       "name": "GPT-4 (OpenAI)",
       "cost_per_1m_in": 30.04905969,
-      "cost_per_1m_out": 59.99801006,
+      "cost_per_1m_out": 59.99659853,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 8192,
@@ -2673,10 +2673,10 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-4",
+      "id": "gpt-4-0613",
       "name": "GPT-4 (OpenAI)",
       "cost_per_1m_in": 30.04905969,
-      "cost_per_1m_out": 59.99659853,
+      "cost_per_1m_out": 59.99801006,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 8192,
@@ -2725,19 +2725,6 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-4-turbo",
-      "name": "GPT-4 Turbo (OpenAI)",
-      "cost_per_1m_in": 10.02452984,
-      "cost_per_1m_out": 29.99920278,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 128000,
-      "default_max_tokens": 4096,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
       "id": "gpt-4-1106-preview",
       "name": "GPT-4 Turbo (OpenAI)",
       "cost_per_1m_in": 10.02452984,
@@ -2751,17 +2738,17 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-4-0125-preview",
-      "name": "GPT-4 Turbo (OpenAI, 128K)",
+      "id": "gpt-4-turbo",
+      "name": "GPT-4 Turbo (OpenAI)",
       "cost_per_1m_in": 10.02452984,
-      "cost_per_1m_out": 29.99910046,
+      "cost_per_1m_out": 29.99920278,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
       "default_max_tokens": 4096,
       "can_reason": false,
       "has_reasoning_efforts": false,
-      "supports_attachments": false
+      "supports_attachments": true
     },
     {
       "id": "gpt-4-turbo-2024-04-09",
@@ -2777,10 +2764,23 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-4-turbo",
+      "id": "gpt-4-0125-preview",
+      "name": "GPT-4 Turbo (OpenAI, 128K)",
+      "cost_per_1m_in": 10.02452984,
+      "cost_per_1m_out": 29.99910046,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 128000,
+      "default_max_tokens": 4096,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "gpt-4-1106-preview",
       "name": "GPT-4 Turbo (OpenRouter)",
       "cost_per_1m_in": 10.02452984,
-      "cost_per_1m_out": 29.99918024,
+      "cost_per_1m_out": 29.99926524,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
@@ -2790,10 +2790,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-4-1106-preview",
+      "id": "gpt-4-turbo",
       "name": "GPT-4 Turbo (OpenRouter)",
       "cost_per_1m_in": 10.02452984,
-      "cost_per_1m_out": 29.99926524,
+      "cost_per_1m_out": 29.99918024,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
@@ -2843,7 +2843,7 @@
     },
     {
       "id": "gpt-4-1-2025-04-14",
-      "name": "GPT-4.1 (EdenAI)",
+      "name": "GPT-4.1 (EdenAI, Image Output)",
       "cost_per_1m_in": 2.00655738,
       "cost_per_1m_out": 7.99982951,
       "cost_per_1m_in_cached": 0,
@@ -2908,7 +2908,7 @@
     },
     {
       "id": "gpt-4-1-mini-2025-04-14",
-      "name": "GPT-4.1 Mini (EdenAI)",
+      "name": "GPT-4.1 Mini (EdenAI, Image Output)",
       "cost_per_1m_in": 0.40131148,
       "cost_per_1m_out": 1.5999659,
       "cost_per_1m_in_cached": 0,
@@ -3349,10 +3349,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-4o-mini-2024-07-18",
+      "id": "gpt-4o-mini",
       "name": "GPT-4o mini (OpenRouter)",
       "cost_per_1m_in": 0.1504918,
-      "cost_per_1m_out": 0.5999827,
+      "cost_per_1m_out": 0.5999859,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
@@ -3362,10 +3362,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-4o-mini",
+      "id": "gpt-4o-mini-2024-07-18",
       "name": "GPT-4o mini (OpenRouter)",
       "cost_per_1m_in": 0.1504918,
-      "cost_per_1m_out": 0.5999859,
+      "cost_per_1m_out": 0.5999827,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
@@ -3414,10 +3414,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-5-2025-08-07",
+      "id": "gpt-5",
       "name": "GPT-5 (OpenAI)",
-      "cost_per_1m_in": 8.92842494,
-      "cost_per_1m_out": 9.80803938,
+      "cost_per_1m_in": 6.33613618,
+      "cost_per_1m_out": 9.8728466,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 272000,
@@ -3427,10 +3427,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-5",
+      "id": "gpt-5-2025-08-07",
       "name": "GPT-5 (OpenAI)",
-      "cost_per_1m_in": 6.33613618,
-      "cost_per_1m_out": 9.8728466,
+      "cost_per_1m_in": 8.92842494,
+      "cost_per_1m_out": 9.80803938,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 272000,
@@ -3817,10 +3817,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-5-1-2025-11-13",
+      "id": "gpt-5-1",
       "name": "GPT-5.1 (OpenAI)",
-      "cost_per_1m_in": 2.76763741,
-      "cost_per_1m_out": 9.96205906,
+      "cost_per_1m_in": 5.3107055,
+      "cost_per_1m_out": 9.89848236,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 272000,
@@ -3830,10 +3830,10 @@
       "supports_attachments": true
     },
     {
-      "id": "gpt-5-1",
+      "id": "gpt-5-1-2025-11-13",
       "name": "GPT-5.1 (OpenAI)",
-      "cost_per_1m_in": 5.3107055,
-      "cost_per_1m_out": 9.89848236,
+      "cost_per_1m_in": 2.76763741,
+      "cost_per_1m_out": 9.96205906,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 272000,
@@ -3999,19 +3999,6 @@
       "supports_attachments": false
     },
     {
-      "id": "gpt-5-2-2025-12-11",
-      "name": "GPT-5.2 (OpenAI)",
-      "cost_per_1m_in": 8.28486464,
-      "cost_per_1m_out": 13.83662838,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 272000,
-      "default_max_tokens": 128000,
-      "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
       "id": "gpt-5-2",
       "name": "GPT-5.2 (OpenAI)",
       "cost_per_1m_in": 7.33162428,
@@ -4033,6 +4020,19 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
       "default_max_tokens": 16384,
+      "can_reason": true,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "gpt-5-2-2025-12-11",
+      "name": "GPT-5.2 (OpenAI)",
+      "cost_per_1m_in": 8.28486464,
+      "cost_per_1m_out": 13.83662838,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 272000,
+      "default_max_tokens": 128000,
       "can_reason": true,
       "has_reasoning_efforts": false,
       "supports_attachments": true
@@ -4260,7 +4260,7 @@
     },
     {
       "id": "gpt-oss-120b",
-      "name": "GPT-OSS-120B (Exacto)",
+      "name": "GPT-OSS-120B (OpenRouter Exacto)",
       "cost_per_1m_in": 0.03914844,
       "cost_per_1m_out": 0.18998494,
       "cost_per_1m_in_cached": 0,
@@ -4273,7 +4273,7 @@
     },
     {
       "id": "gpt-oss-120b",
-      "name": "GPT-OSS-120B (Free)",
+      "name": "GPT-OSS-120B (OpenRouter Free)",
       "cost_per_1m_in": 0.03914844,
       "cost_per_1m_out": 0.18998494,
       "cost_per_1m_in_cached": 0,
@@ -4468,7 +4468,7 @@
     },
     {
       "id": "gemini-2-0-flash-exp",
-      "name": "Gemini 2.0 Flash Exp (Free)",
+      "name": "Gemini 2.0 Flash Experimental (Free)",
       "cost_per_1m_in": 0,
       "cost_per_1m_out": 0,
       "cost_per_1m_in_cached": 0,
@@ -4597,19 +4597,6 @@
       "supports_attachments": false
     },
     {
-      "id": "gemini-2-5-flash-lite",
-      "name": "Gemini 2.5 Flash-Lite (OpenRouter)",
-      "cost_per_1m_in": 0.1003276,
-      "cost_per_1m_out": 0.39999443,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 1048576,
-      "default_max_tokens": 65535,
-      "can_reason": true,
-      "has_reasoning_efforts": true,
-      "supports_attachments": true
-    },
-    {
       "id": "gemini-2-5-flash-lite-preview-06-17",
       "name": "Gemini 2.5 Flash-Lite (OpenRouter)",
       "cost_per_1m_in": 0.10032733,
@@ -4631,6 +4618,19 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 1048576,
       "default_max_tokens": 65536,
+      "can_reason": true,
+      "has_reasoning_efforts": true,
+      "supports_attachments": true
+    },
+    {
+      "id": "gemini-2-5-flash-lite",
+      "name": "Gemini 2.5 Flash-Lite (OpenRouter)",
+      "cost_per_1m_in": 0.1003276,
+      "cost_per_1m_out": 0.39999443,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 1048576,
+      "default_max_tokens": 65535,
       "can_reason": true,
       "has_reasoning_efforts": true,
       "supports_attachments": true
@@ -5014,6 +5014,19 @@
     },
     {
       "id": "gemma-3-12b-it",
+      "name": "Gemma 3 12B (Free)",
+      "cost_per_1m_in": 0.03008137,
+      "cost_per_1m_out": 0.09999788,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 32768,
+      "default_max_tokens": 8192,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "gemma-3-12b-it",
       "name": "Gemma 3 12B (OpenRouter)",
       "cost_per_1m_in": 0.03008137,
       "cost_per_1m_out": 0.09999788,
@@ -5021,19 +5034,6 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 131072,
       "default_max_tokens": 131072,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
-      "id": "gemma-3-12b-it",
-      "name": "Gemma 3 12B Free (32K)",
-      "cost_per_1m_in": 0.03008137,
-      "cost_per_1m_out": 0.09999788,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 32768,
-      "default_max_tokens": 8192,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
@@ -5339,7 +5339,7 @@
     },
     {
       "id": "grok-3-fast-latest",
-      "name": "Grok 3 Fast (xAI)",
+      "name": "Grok 3 Fast (EdenAI)",
       "cost_per_1m_in": 19.57119067,
       "cost_per_1m_out": 24.80134121,
       "cost_per_1m_in_cached": 0,
@@ -5455,10 +5455,10 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-3-mini-fast-beta",
-      "name": "Grok 3 Mini Fast (xAI)",
-      "cost_per_1m_in": 2.17071547,
-      "cost_per_1m_out": 3.98165588,
+      "id": "grok-3-mini-fast-latest",
+      "name": "Grok 3 Mini Fast (EdenAI)",
+      "cost_per_1m_in": 2.54675541,
+      "cost_per_1m_out": 3.97562748,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 131072,
@@ -5481,10 +5481,10 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-3-mini-fast-latest",
+      "id": "grok-3-mini-fast-beta",
       "name": "Grok 3 Mini Fast (xAI)",
-      "cost_per_1m_in": 2.54675541,
-      "cost_per_1m_out": 3.97562748,
+      "cost_per_1m_in": 2.17071547,
+      "cost_per_1m_out": 3.98165588,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 131072,
@@ -5505,19 +5505,6 @@
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
-    },
-    {
-      "id": "grok-4-0709",
-      "name": "Grok 4 (EdenAI)",
-      "cost_per_1m_in": 3.71846727,
-      "cost_per_1m_out": 14.72296724,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 256000,
-      "default_max_tokens": 256000,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
     },
     {
       "id": "grok-4-latest",
@@ -5556,6 +5543,19 @@
       "default_max_tokens": 256000,
       "can_reason": true,
       "has_reasoning_efforts": true,
+      "supports_attachments": true
+    },
+    {
+      "id": "grok-4-0709",
+      "name": "Grok 4 (xAI)",
+      "cost_per_1m_in": 3.71846727,
+      "cost_per_1m_out": 14.72296724,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 256000,
+      "default_max_tokens": 256000,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
       "supports_attachments": true
     },
     {
@@ -5663,10 +5663,10 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-4-1-fast-non-reasoning",
+      "id": "grok-4-1-fast-non-reasoning-latest",
       "name": "Grok 4.1 Fast Non-Reasoning (EdenAI)",
-      "cost_per_1m_in": 0.29647836,
-      "cost_per_1m_out": 0.48747474,
+      "cost_per_1m_in": 0.36067498,
+      "cost_per_1m_out": 0.4782554,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 2000000,
@@ -5676,10 +5676,10 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-4-1-fast-non-reasoning-latest",
+      "id": "grok-4-1-fast-non-reasoning",
       "name": "Grok 4.1 Fast Non-Reasoning (EdenAI)",
-      "cost_per_1m_in": 0.36067498,
-      "cost_per_1m_out": 0.4782554,
+      "cost_per_1m_in": 0.29647836,
+      "cost_per_1m_out": 0.48747474,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 2000000,
@@ -5702,10 +5702,10 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-4-1-fast-reasoning-latest",
+      "id": "grok-4-1-fast-reasoning",
       "name": "Grok 4.1 Fast Reasoning (EdenAI)",
-      "cost_per_1m_in": 0.23330866,
-      "cost_per_1m_out": 0.49658626,
+      "cost_per_1m_in": 0.21813472,
+      "cost_per_1m_out": 0.49776226,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 2000000,
@@ -5715,10 +5715,10 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-4-1-fast-reasoning",
+      "id": "grok-4-1-fast-reasoning-latest",
       "name": "Grok 4.1 Fast Reasoning (EdenAI)",
-      "cost_per_1m_in": 0.21813472,
-      "cost_per_1m_out": 0.49776226,
+      "cost_per_1m_in": 0.23330866,
+      "cost_per_1m_out": 0.49658626,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 2000000,
@@ -5741,19 +5741,6 @@
       "supports_attachments": false
     },
     {
-      "id": "grok-code-fast-1-0825",
-      "name": "Grok Code Fast (EdenAI)",
-      "cost_per_1m_in": 0.54417441,
-      "cost_per_1m_out": 1.38261953,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 256000,
-      "default_max_tokens": 256000,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
       "id": "grok-code-fast-1",
       "name": "Grok Code Fast 1 (OpenRouter)",
       "cost_per_1m_in": 0.2,
@@ -5763,6 +5750,19 @@
       "context_window": 256000,
       "default_max_tokens": 10000,
       "can_reason": true,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "grok-code-fast-1-0825",
+      "name": "Grok Code Fast 1.0 (xAI)",
+      "cost_per_1m_in": 0.54417441,
+      "cost_per_1m_out": 1.38261953,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 256000,
+      "default_max_tokens": 256000,
+      "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
     },
@@ -5950,7 +5950,7 @@
     },
     {
       "id": "internvl-3-78b",
-      "name": "InternVL3 78B (Vision)",
+      "name": "InternVL3 78B (OpenRouter)",
       "cost_per_1m_in": 0.09999999999999999,
       "cost_per_1m_out": 0.39,
       "cost_per_1m_in_cached": 0,
@@ -6210,7 +6210,7 @@
     },
     {
       "id": "l3-euryale-70b",
-      "name": "L3 Euryale 70B",
+      "name": "L3 Euryale 70B (8K)",
       "cost_per_1m_in": 1.48120718,
       "cost_per_1m_out": 1.47993702,
       "cost_per_1m_in_cached": 0,
@@ -6352,19 +6352,6 @@
       "supports_attachments": false
     },
     {
-      "id": "llama-3-70b-instruct",
-      "name": "Llama 3 70B Instruct",
-      "cost_per_1m_in": 0.30032653,
-      "cost_per_1m_out": 3.58974447,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 8192,
-      "default_max_tokens": 8192,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
       "id": "llama-3-70b-instruct-v1",
       "name": "Llama 3 70B Instruct",
       "cost_per_1m_in": 2.65284784,
@@ -6373,6 +6360,19 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 0,
       "default_max_tokens": 4096,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "llama-3-70b-instruct",
+      "name": "Llama 3 70B Instruct",
+      "cost_per_1m_in": 0.30032653,
+      "cost_per_1m_out": 3.58974447,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 8192,
+      "default_max_tokens": 8192,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
@@ -6847,7 +6847,7 @@
     },
     {
       "id": "llama-3-2-11b-instruct-v1",
-      "name": "Llama 3.2 11B Instruct (Vision)",
+      "name": "Llama 3.2 11B Instruct (Bedrock)",
       "cost_per_1m_in": 0.35028,
       "cost_per_1m_out": 0.34998488,
       "cost_per_1m_in_cached": 0,
@@ -7640,7 +7640,7 @@
     },
     {
       "id": "mercury-coder",
-      "name": "Mercury Coder (128K)",
+      "name": "Mercury Coder (OpenRouter)",
       "cost_per_1m_in": 0.25246711,
       "cost_per_1m_out": 0.99992042,
       "cost_per_1m_in_cached": 0,
@@ -7847,19 +7847,6 @@
       "supports_attachments": false
     },
     {
-      "id": "ministral-14b-2512",
-      "name": "Ministral 3 14B (Vision)",
-      "cost_per_1m_in": 0.20016051,
-      "cost_per_1m_out": 0.19999647,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 262144,
-      "default_max_tokens": 262144,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
       "id": "ministral-3-14b-instruct",
       "name": "Ministral 3 14B (Vision)",
       "cost_per_1m_in": 0.20016051,
@@ -7868,6 +7855,19 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 128000,
       "default_max_tokens": 8192,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "ministral-14b-2512",
+      "name": "Ministral 3 14B (Vision)",
+      "cost_per_1m_in": 0.20016051,
+      "cost_per_1m_out": 0.19999647,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 262144,
+      "default_max_tokens": 262144,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
@@ -7977,19 +7977,6 @@
       "supports_attachments": true
     },
     {
-      "id": "mistral-7b-instruct",
-      "name": "Mistral 7B Instruct",
-      "cost_per_1m_in": 0.15014154,
-      "cost_per_1m_out": 0.04762305,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 32000,
-      "default_max_tokens": 4096,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
       "id": "mistral-7b-instruct-0-1",
       "name": "Mistral 7B Instruct",
       "cost_per_1m_in": 0.02803698,
@@ -7998,6 +7985,19 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 2824,
       "default_max_tokens": 2048,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "mistral-7b-instruct",
+      "name": "Mistral 7B Instruct",
+      "cost_per_1m_in": 0.15014154,
+      "cost_per_1m_out": 0.04762305,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 32000,
+      "default_max_tokens": 4096,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": false
@@ -8043,7 +8043,7 @@
     },
     {
       "id": "mistral-7b-instruct-v0-1",
-      "name": "Mistral 7B Instruct v0.1 (Together)",
+      "name": "Mistral 7B Instruct v0.1 (Together, 32K)",
       "cost_per_1m_in": 0.20014164,
       "cost_per_1m_out": 0.19998439,
       "cost_per_1m_in_cached": 0,
@@ -8225,7 +8225,7 @@
     },
     {
       "id": "mistral-large-2411",
-      "name": "Mistral Large 2411 (OpenRouter)",
+      "name": "Mistral Large 2411 (131K)",
       "cost_per_1m_in": 2.00426439,
       "cost_per_1m_out": 5.99990618,
       "cost_per_1m_in_cached": 0,
@@ -8823,7 +8823,7 @@
     },
     {
       "id": "multimodal",
-      "name": "Multimodal Pool",
+      "name": "Multimodal",
       "cost_per_1m_in": 0.0602005,
       "cost_per_1m_out": 12.56744161,
       "cost_per_1m_in_cached": 0,
@@ -9070,7 +9070,7 @@
     },
     {
       "id": "nemotron-nano-9b-v2",
-      "name": "Nemotron Nano 9B v2 (OpenRouter, 131K)",
+      "name": "Nemotron Nano 9B v2 (OpenRouter)",
       "cost_per_1m_in": 0.04012759,
       "cost_per_1m_out": 0.15999604,
       "cost_per_1m_in_cached": 0,
@@ -9317,6 +9317,19 @@
     },
     {
       "id": "nova-pro-v1",
+      "name": "Nova Pro (Bedrock Video)",
+      "cost_per_1m_in": 0.80267335,
+      "cost_per_1m_out": 3.19995455,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 300000,
+      "default_max_tokens": 10000,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "nova-pro-v1",
       "name": "Nova Pro (Bedrock)",
       "cost_per_1m_in": 0.80267335,
       "cost_per_1m_out": 3.19995455,
@@ -9337,19 +9350,6 @@
       "cost_per_1m_out_cached": 0,
       "context_window": 300000,
       "default_max_tokens": 5120,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
-      "id": "nova-pro-v1",
-      "name": "Nova Pro (Video)",
-      "cost_per_1m_in": 0.80267335,
-      "cost_per_1m_out": 3.19995455,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 300000,
-      "default_max_tokens": 10000,
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
@@ -9408,7 +9408,7 @@
     },
     {
       "id": "o3-deep-research-2025-06-26",
-      "name": "O3 Deep Research (200K)",
+      "name": "O3 Deep Research (OpenAI)",
       "cost_per_1m_in": 10,
       "cost_per_1m_out": 40,
       "cost_per_1m_in_cached": 0,
@@ -9418,19 +9418,6 @@
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
-    },
-    {
-      "id": "olmo-3-32b-think",
-      "name": "OLMo 3 32B Think",
-      "cost_per_1m_in": 0.15039463,
-      "cost_per_1m_out": 0.49997238,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 65536,
-      "default_max_tokens": 65536,
-      "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
     },
     {
       "id": "olmo-3-7b-instruct",
@@ -9447,7 +9434,7 @@
     },
     {
       "id": "olmo-3-7b-think",
-      "name": "OLMo 3 7B Think",
+      "name": "OLMo 3 7B Think (OpenRouter)",
       "cost_per_1m_in": 0.12015785,
       "cost_per_1m_out": 0.19998895,
       "cost_per_1m_in_cached": 0,
@@ -9548,6 +9535,19 @@
       "can_reason": false,
       "has_reasoning_efforts": false,
       "supports_attachments": true
+    },
+    {
+      "id": "olmo-3-32b-think",
+      "name": "Olmo 3 32B Think (OpenRouter)",
+      "cost_per_1m_in": 0.15039463,
+      "cost_per_1m_out": 0.49997238,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 65536,
+      "default_max_tokens": 65536,
+      "can_reason": true,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
     },
     {
       "id": "olmo-3-1-32b-think",
@@ -9824,7 +9824,7 @@
     },
     {
       "id": "premium-coding",
-      "name": "Premium Coding Pool",
+      "name": "Premium Coding",
       "cost_per_1m_in": 3.01090116,
       "cost_per_1m_out": 14.99965052,
       "cost_per_1m_in_cached": 0,
@@ -9876,7 +9876,7 @@
     },
     {
       "id": "qwq-32b-arliai-rpr-v1",
-      "name": "QwQ-32B ArliAI RpR v1 (OpenRouter)",
+      "name": "QwQ-32B ArliAI RpR v1 (32K)",
       "cost_per_1m_in": 0.03,
       "cost_per_1m_out": 0.11,
       "cost_per_1m_in_cached": 0,
@@ -10330,32 +10330,6 @@
       "supports_attachments": false
     },
     {
-      "id": "qwen-3-coder-480b-a35b-instruct",
-      "name": "Qwen 3 Coder 480B A35B",
-      "cost_per_1m_in": 0,
-      "cost_per_1m_out": 0,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 262144,
-      "default_max_tokens": 2048,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
-      "id": "qwen-3-coder-480b-a35b-instruct",
-      "name": "Qwen 3 Coder 480B A35B (DeepInfra)",
-      "cost_per_1m_in": 0.40130826,
-      "cost_per_1m_out": 1.59996254,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 262144,
-      "default_max_tokens": 16384,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
       "id": "qwen-3-coder-flash",
       "name": "Qwen 3 Coder Flash (OpenRouter)",
       "cost_per_1m_in": 0.30122649,
@@ -10643,7 +10617,7 @@
     },
     {
       "id": "qwen-3-14b",
-      "name": "Qwen3 14B (OpenRouter Free)",
+      "name": "Qwen3 14B (OpenRouter)",
       "cost_per_1m_in": 0.05017974,
       "cost_per_1m_out": 0.21999497,
       "cost_per_1m_in_cached": 0,
@@ -10656,7 +10630,7 @@
     },
     {
       "id": "qwen-3-14b",
-      "name": "Qwen3 14B (OpenRouter)",
+      "name": "Qwen3 14B Free (OpenRouter)",
       "cost_per_1m_in": 0.05017974,
       "cost_per_1m_out": 0.21999497,
       "cost_per_1m_in_cached": 0,
@@ -10851,7 +10825,7 @@
     },
     {
       "id": "qwen-3-30b-a3b-thinking-2507",
-      "name": "Qwen3 30B A3B Thinking (OpenRouter)",
+      "name": "Qwen3 30B Thinking (OpenRouter)",
       "cost_per_1m_in": 0.38323265,
       "cost_per_1m_out": 0.33103272,
       "cost_per_1m_in_cached": 0,
@@ -10902,8 +10876,34 @@
       "supports_attachments": false
     },
     {
+      "id": "qwen-3-coder-480b-a35b-instruct",
+      "name": "Qwen3 Coder 480B A35B",
+      "cost_per_1m_in": 0,
+      "cost_per_1m_out": 0,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 262144,
+      "default_max_tokens": 2048,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "qwen-3-coder-480b-a35b-instruct",
+      "name": "Qwen3 Coder 480B A35B (DeepInfra)",
+      "cost_per_1m_in": 0.40130826,
+      "cost_per_1m_out": 1.59996254,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 262144,
+      "default_max_tokens": 16384,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
       "id": "qwen-3-coder-480b-a35b-instruct-turbo",
-      "name": "Qwen3 Coder 480B Instruct (262K)",
+      "name": "Qwen3 Coder 480B Instruct Turbo (262K)",
       "cost_per_1m_in": 0.28098119,
       "cost_per_1m_out": 1.19996199,
       "cost_per_1m_in_cached": 0,
@@ -11071,47 +11071,8 @@
       "supports_attachments": true
     },
     {
-      "id": "qwen-3-vl-30b-a3b-thinking",
-      "name": "Qwen3-VL 30B Thinking",
-      "cost_per_1m_in": 0,
-      "cost_per_1m_out": 0,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 131072,
-      "default_max_tokens": 16384,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": false
-    },
-    {
-      "id": "qwen-3-vl-30b-a3b-thinking",
-      "name": "Qwen3-VL 30B Thinking (DeepInfra, 262K)",
-      "cost_per_1m_in": 0.20098119,
-      "cost_per_1m_out": 1.19997351,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 262144,
-      "default_max_tokens": 16384,
-      "can_reason": false,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
-      "id": "qwen-3-vl-30b-a3b-thinking",
-      "name": "Qwen3-VL 30B Thinking (OpenRouter, 131K)",
-      "cost_per_1m_in": 1.40408163,
-      "cost_per_1m_out": 0.98033876,
-      "cost_per_1m_in_cached": 0,
-      "cost_per_1m_out_cached": 0,
-      "context_window": 131072,
-      "default_max_tokens": 32768,
-      "can_reason": true,
-      "has_reasoning_efforts": false,
-      "supports_attachments": true
-    },
-    {
       "id": "qwen-3-vl-32b-instruct",
-      "name": "Qwen3-VL 32B (Vision, 262K)",
+      "name": "Qwen3-VL 32B (OpenRouter)",
       "cost_per_1m_in": 0.50122649,
       "cost_per_1m_out": 1.49996333,
       "cost_per_1m_in_cached": 0,
@@ -11166,6 +11127,45 @@
       "name": "Qwen3-VL-235B Thinking (OpenRouter)",
       "cost_per_1m_in": 0.45285714,
       "cost_per_1m_out": 3.49994432,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 131072,
+      "default_max_tokens": 32768,
+      "can_reason": true,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "qwen-3-vl-30b-a3b-thinking",
+      "name": "Qwen3-VL-30B Thinking",
+      "cost_per_1m_in": 0,
+      "cost_per_1m_out": 0,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 131072,
+      "default_max_tokens": 16384,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": false
+    },
+    {
+      "id": "qwen-3-vl-30b-a3b-thinking",
+      "name": "Qwen3-VL-30B Thinking (DeepInfra, 262K)",
+      "cost_per_1m_in": 0.20098119,
+      "cost_per_1m_out": 1.19997351,
+      "cost_per_1m_in_cached": 0,
+      "cost_per_1m_out_cached": 0,
+      "context_window": 262144,
+      "default_max_tokens": 16384,
+      "can_reason": false,
+      "has_reasoning_efforts": false,
+      "supports_attachments": true
+    },
+    {
+      "id": "qwen-3-vl-30b-a3b-thinking",
+      "name": "Qwen3-VL-30B Thinking (OpenRouter, 131K)",
+      "cost_per_1m_in": 1.40408163,
+      "cost_per_1m_out": 0.98033876,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 131072,
@@ -11579,7 +11579,7 @@
     },
     {
       "id": "tongyi-deepresearch-30b-a3b",
-      "name": "Tongyi DeepResearch 30B (OpenRouter Free)",
+      "name": "Tongyi DeepResearch 30B (Free)",
       "cost_per_1m_in": 0.09032706,
       "cost_per_1m_out": 0.39999117,
       "cost_per_1m_in_cached": 0,
@@ -11838,10 +11838,10 @@
       "supports_attachments": false
     },
     {
-      "id": "o1",
-      "name": "o1 (OpenAI)",
-      "cost_per_1m_in": 54.2780968,
-      "cost_per_1m_out": 59.01804758,
+      "id": "o1-2024-12-17",
+      "name": "o1 (200K)",
+      "cost_per_1m_in": 36.50943396,
+      "cost_per_1m_out": 59.46226415,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -11851,10 +11851,10 @@
       "supports_attachments": true
     },
     {
-      "id": "o1-2024-12-17",
-      "name": "o1 (OpenAI, 200K)",
-      "cost_per_1m_in": 36.50943396,
-      "cost_per_1m_out": 59.46226415,
+      "id": "o1",
+      "name": "o1 (OpenAI)",
+      "cost_per_1m_in": 54.2780968,
+      "cost_per_1m_out": 59.01804758,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -11929,10 +11929,10 @@
       "supports_attachments": false
     },
     {
-      "id": "o3",
+      "id": "o3-2025-04-16",
       "name": "o3 (OpenAI)",
-      "cost_per_1m_in": 7.2633306,
-      "cost_per_1m_out": 7.86841674,
+      "cost_per_1m_in": 3.804758,
+      "cost_per_1m_out": 7.95488105,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -11942,10 +11942,10 @@
       "supports_attachments": true
     },
     {
-      "id": "o3-2025-04-16",
+      "id": "o3",
       "name": "o3 (OpenAI)",
-      "cost_per_1m_in": 3.804758,
-      "cost_per_1m_out": 7.95488105,
+      "cost_per_1m_in": 7.2633306,
+      "cost_per_1m_out": 7.86841674,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -12137,10 +12137,10 @@
       "supports_attachments": true
     },
     {
-      "id": "o4-mini",
+      "id": "o4-mini-2025-04-16",
       "name": "o4-mini (OpenAI)",
-      "cost_per_1m_in": 1.9121411,
-      "cost_per_1m_out": 4.37969647,
+      "cost_per_1m_in": 2.17202625,
+      "cost_per_1m_out": 4.37319934,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -12150,10 +12150,10 @@
       "supports_attachments": true
     },
     {
-      "id": "o4-mini-2025-04-16",
+      "id": "o4-mini",
       "name": "o4-mini (OpenAI)",
-      "cost_per_1m_in": 2.17202625,
-      "cost_per_1m_out": 4.37319934,
+      "cost_per_1m_in": 1.9121411,
+      "cost_per_1m_out": 4.37969647,
       "cost_per_1m_in_cached": 0,
       "cost_per_1m_out_cached": 0,
       "context_window": 200000,
@@ -12189,8 +12189,8 @@
       "supports_attachments": false
     },
     {
-      "id": "o4-mini-deep-research-2025-06-26",
-      "name": "o4-mini Deep Research (200K)",
+      "id": "o4-mini-deep-research",
+      "name": "o4-mini Deep Research (OpenAI)",
       "cost_per_1m_in": 2,
       "cost_per_1m_out": 8,
       "cost_per_1m_in_cached": 0,
@@ -12202,7 +12202,7 @@
       "supports_attachments": true
     },
     {
-      "id": "o4-mini-deep-research",
+      "id": "o4-mini-deep-research-2025-06-26",
       "name": "o4-mini Deep Research (OpenAI)",
       "cost_per_1m_in": 2,
       "cost_per_1m_out": 8,
